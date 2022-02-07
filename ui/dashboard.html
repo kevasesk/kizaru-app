@@ -1,0 +1,80 @@
+<header id="dashboard-header">
+	<div class="userpic">
+		<img src="img/userpic.jpg">
+	</div>
+	<h5><span class="" id="a-name"></span></h5>
+	<div class="exit-btn">
+		<button type="button" class="btn btn-sm btn-dark" onclick="logout()">Выйти</button>
+	</div>
+</header>
+<script>
+	$('#a-name').html(AccountName)
+</script>
+<div id="dashboard-wrapper">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col">
+				<h6 class="block-head">Список ссылок</h6>
+				<textarea class="block" id="mail-links"></textarea>
+			</div>
+			<div class="col-3" style="padding-left:0;padding-right:0">
+				<h6 class="block-head">Профиль на сайте</h6>
+				<div class="profile block">
+					<div class="userpic">
+						<img id="profile-pic" src="img/userpic.jpg">
+					</div>
+					<form>
+						<div class="form-group">
+							<input type="text" class="custom-input form-control form-control-sm" id="profile-username" placeholder="Логин">
+						</div>
+						<div class="form-group">
+							<input type="password" class="custom-input form-control form-control-sm" id="profile-password" placeholder="Пароль">
+						</div>
+						<button id="profile-login-btn" type="button" class="btn btn-dark btn-sm btn-block service-btn" onclick="loginOnSite()">Вход</button>
+					</form>
+				</div>
+			</div>
+			<div class="col">
+				<h6 class="block-head">Текст рассылки</h6>
+				<textarea class="block" id="mail-text"></textarea>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<div class="input-group input-group-sm" id="ua-block">
+					<input type="text" class="custom-input form-control" placeholder="User-Agent" id="ua" aria-describedby="basic-addon1">
+					<div class="input-group-append">
+						<button class="btn btn-dark" type="button" onclick="setUserAgent()">Сохранить</button>
+					</div>
+					<script>
+						getUserAgent()
+					</script>
+				</div>
+				<button id="start-btn" type="button" class="btn btn-block btn-dark start-btn" onclick="start()">Начать работу</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="progressModal" tabindex="-1" role="dialog" aria-labelledby="exampleModal3Label" aria-hidden="true">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModal3Label">Работаем...</h5>
+				<button type="button" class="close" onclick="$('#progressModal').modal('hide')" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="progress">
+					<p class="progress-text">10 из 20</p>
+					<div id="progress" class="progress-bar progress-bar-striped bg-dark progress-bar-animated" role="progressbar" style="width: 0"></div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button id="stop-btn" type="button" class="btn btn-dark" onclick="stop()">Остановить</button>
+			</div>
+		</div>
+	</div>
+</div>
