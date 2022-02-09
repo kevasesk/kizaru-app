@@ -155,7 +155,7 @@ def login(O0O0OOO00OOO00OOO, OOOOOO0O0O000O0OO, save_login_details=False):  # li
 
 
 @eel.expose  # line:212
-def login_on_site(O00OO0O0OOOO0OOO0, O000O000O00O0000O, OO0OO00OO000O0O00):  # line:213
+def login_on_site(O00OO0O0OOOO0OOO0, O000O000O00O0000O, OO0OO00OO000O0O00):  # line:
     global s  # line:214
     s = requests.Session()  # line:215
     try:  # line:216
@@ -244,4 +244,4 @@ def get_user_agent():  # line:324
 
 
 eel.init('ui')  # line:332
-eel.start('index.html', size=(720, 420))
+eel.start('index.html', size=(1250, 750))

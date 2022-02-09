@@ -218,3 +218,42 @@ async function getUserAgent() {
 		return true
 	}
 }
+
+var createNewAccount = function(){
+	var tabContent = $('#tabContent');
+
+	var navItemTemplate = $('#navItemTemplate');
+	var navContentTemplate = $('#navContentTemplate');
+	
+	var id = Date.now();
+	var target = 'tab' + Date.now();
+
+	var templateText = navItemTemplate.html();
+	templateText = templateText.replaceAll('${id}', id);
+	templateText = templateText.replaceAll('${target}', '#' + target);
+	templateText = templateText.replaceAll('${label}', 'Новый профиль');
+	$(templateText).insertBefore(".nav-item.add");
+
+	var templateContentText = navContentTemplate.html();
+	templateContentText = templateContentText.replaceAll('${id}', target);
+	tabContent.append(templateContentText);
+
+	$('button[data-bs-target="#'+target+'"]').trigger('click');
+	
+};
+var deleteTab = function(element){
+	var result = confirm("Вы уверены что хотите выйти из этого аккаунта?");
+	if(result){
+		$(element).parent('li').remove();
+		$($(element).data('target')).remove();
+	}
+};
+
+$(document).on('click', '#newAccountItem',function(){
+	createNewAccount();
+});
+
+$(document).on('click', '.nav-item .close',function(){
+	deleteTab(this);
+});
+

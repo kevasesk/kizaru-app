@@ -156,6 +156,10 @@ header .userpic {
 	width: 30px;
 	height: 30px;
 }
+#profile-pic{
+	width: 50px;
+	height: 50px;
+}
 
 header .userpic img {
 	height: 30px;
@@ -163,7 +167,7 @@ header .userpic img {
 }
 
 .userpic {
-	text-align: center;
+	/* text-align: center; */
 	overflow: hidden;
 	display: flex;
 	justify-content: center;
@@ -297,4 +301,36 @@ button.close:hover {
 
 #ua-block button {
 	border-left: 1px solid #111117 !important;
+}
+
+.container{
+	padding-right: 0px;
+    padding-left: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
+#accountsTablist{
+	border: none;
+}
+#accountsTablist button{
+	color: #efefef;
+	padding: 2px 5px;
+	border-radius: 0px;
+}
+#accountsTablist button.block-head.active{
+	background-color: #7f7f7f;
+}
+#accountsTablist li{
+	display: inline-flex; 
+	margin: 0px 5px 0px 0px;
+}
+#accountsTablist .nav-item{
+	background-color: #444447;
+}
+#accountsTablist .nav-link{
+	border-radius: 0px;
+}
+#accountsTablist .nav-link.active{
+	border: black;
 }
