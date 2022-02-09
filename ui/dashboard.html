@@ -23,11 +23,17 @@
 			</div>
 		</div>
 		<div class="tab-content" id="tabContent"></div>
+		<script>
+			 $('#newAccountItem').trigger('click');//TODO rework auto create form for new account.
+		</script>
 	</div>
 
 	<template id="navItemTemplate">
 		<li class="nav-item" id="${id}">
-			<button class="nav-link block-head" data-bs-toggle="tab" data-bs-target="${target}" type="button">${label}</button>
+			<button class="nav-link block-head" data-bs-toggle="tab" data-bs-target="${target}" type="button">
+				<img class="profile-pic-small" data-target="${target}" src="${img}">
+				<span>${label}</snap>
+			</button>
 			<button class="btn btn-danger close" data-target="${target}" type="button">X</button>
 		</li>
 	</template>
@@ -45,7 +51,7 @@
 						<input type="password" class="custom-input form-control form-control-sm" id="profile-password" placeholder="Пароль">
 					</div>
 					<div class="col-2">
-						<button id="profile-login-btn" type="button" class="btn btn-dark float-right" onclick="loginOnSite()">Вход</button>
+						<button id="profile-login-btn" type="button" class="btn btn-dark float-right" onclick="loginOnSite('${id}')">Вход</button>
 					</div>
 				</div>
 				<div class="row">

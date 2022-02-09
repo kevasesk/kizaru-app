@@ -54,7 +54,6 @@ async function login(username=null, password=null, saveLoginDetails=true) {
 	}
 	if (username != '' && password != '') {
 		let result = await eel.login(username, password, saveLoginDetails)()
-		console.log(result);
 		if (result) {
 			// $.toast('Успешный вход в аккаунт '+username, 'success', 1000)
 			AccountName = username
@@ -81,7 +80,7 @@ async function logout() {
 	return true
 }
 
-async function loginOnSite() {
+async function loginOnSite(targetId = null) {
 	isLoginButtonDisabled = $('#profile-login-btn').attr('disabled')
 	if (!authorized && !isLoginButtonDisabled) {
 		username = $('#profile-username').val()
@@ -96,7 +95,10 @@ async function loginOnSite() {
 				$('#profile-login-btn').attr('disabled', false)
 				$('#profile-username').attr('readonly', true)
 				$('#profile-password').attr('readonly', true)
-				$('#profile-login-btn').html('Выход')
+				$('#profile-login-btn').html('Выход');
+				$('button[data-bs-target="#'+targetId+'"] span').html(username);
+				$('button[data-bs-target="#'+targetId+'"] img').attr('src', result);
+			
 				return true
 			}
 			else {
@@ -231,6 +233,7 @@ var createNewAccount = function(){
 	var templateText = navItemTemplate.html();
 	templateText = templateText.replaceAll('${id}', id);
 	templateText = templateText.replaceAll('${target}', '#' + target);
+	templateText = templateText.replaceAll('${img}', 'img/userpic.jpg');
 	templateText = templateText.replaceAll('${label}', 'Новый профиль');
 	$(templateText).insertBefore(".nav-item.add");
 
@@ -256,4 +259,6 @@ $(document).on('click', '#newAccountItem',function(){
 $(document).on('click', '.nav-item .close',function(){
 	deleteTab(this);
 });
+
+
 
