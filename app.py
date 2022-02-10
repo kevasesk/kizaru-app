@@ -9,6 +9,9 @@ import requests  # line:11
 import eel  # line:12
 import traceback  # line:13
 
+#Eel==0.14.0
+#requests==2.25.0
+
 auth_file_path = 'auth'  # line:14
 os.system('cd "%s"' % os.path.dirname(os.path.abspath(__file__)))  # line:17
 cfg = {
