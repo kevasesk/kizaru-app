@@ -7,6 +7,7 @@ import json  # line:7
 import os  # line:8
 import requests  # line:11
 import eel  # line:12
+import traceback  # line:13
 
 auth_file_path = 'auth'  # line:14
 os.system('cd "%s"' % os.path.dirname(os.path.abspath(__file__)))  # line:17
@@ -98,6 +99,10 @@ def mailing(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, old_urls=[]
                                 OO0O0000OO00O000O.find(_O0OO0O0O00OOO0O00[0]) + len(_O0OO0O0O00OOO0O00[0]):]  # line:130
             OO0O0O0O0O000OO0O = OO0O0O0O0O000OO0O[:OO0O0O0O0O000OO0O.find(_O0OO0O0O00OOO0O00[1])]  # line:131
             sleep(randint(cfg['DELAY_BETWEEN_ACTIONS'][0], cfg['DELAY_BETWEEN_ACTIONS'][1]))  # line:136
+
+            message = bytes(O0O0OOO00O00000OO, 'UTF-8').decode('utf-8')
+            message = str(message.encode(encoding="ascii",errors="ignore"), 'utf-8')
+
             OO0O0000OO00O000O = s.post(
                 'https://www.dream-singles.com/messaging/write.php?replyId=%s&receiver=%s&mode=inbox&page=1&q=%s' % (
                 OOO0OOOOOOO0OO00O, OOO0O00O0OOO0O00O, OOOO000O0O0O0O0O0), headers={
@@ -111,9 +116,14 @@ def mailing(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, old_urls=[]
                     "User-Agent": O0OOO00OOOO00OOOO},
                 data='-----------------------------221234741415091439122798769189\\r\nContent-Disposition: form-data; name="mailFolders"\r\n\r\n0\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="targetFolder"\r\n\r\n0\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="draftid"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="receiver"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="sender"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="replyId"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="which_message"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="%s"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="message"\r\n\r\n\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="media-gallery-selection"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="video_attachment"; filename=""\r\nContent-Type: application/octet-stream\r\n\r\n\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="__tcAction[send]"\r\n\r\nSend\r\n-----------------------------221234741415091439122798769189--\r\n' % (
                 OO000O0OO0O0O0O0O, OOO0O00O0OOO0O00O, OO000O0OO0O0OO0OO, OOO0OOOOOOO0OO00O, O0000O000O0O0OOO0,
-                O0000O000O0O0OOO0, O0O0OOO00O00000OO, OO0O0O0O0O000OO0O)).text  # line:168
+                O0000O000O0O0OOO0, message, OO0O0O0O0O000OO0O)).text  # line:168
+
             SuccessCount += 1  # line:171
-        except:  # line:173
+        except Exception as e:  # line:173
+            f = open("debug.log", "a")
+            f.write(str(e))
+            f.write(str(traceback.format_exc()))
+            f.close()
             print_exc()  # line:174
     sleep(1)  # line:175
     Working = False  # line:176
