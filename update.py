@@ -1,4 +1,4 @@
-import requests
+import requests, sys
 
 
 print('executed update')
