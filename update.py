@@ -8,8 +8,8 @@ files = [
     'ui/index.html',
     'ui/dashboard.html',
     'ui/login.html',
-    'js/functions.js',
-    'css/style.css'
+    'ui/js/functions.js',
+    'ui/css/style.css'
 ]
 
 for fileName in files:
