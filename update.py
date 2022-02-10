@@ -15,4 +15,4 @@ files = [
 for fileName in files:
     data = requests.get(remote_url + fileName)
     with open(fileName, 'wb') as file:
-        file.write(data.text)
+        file.write(bytes(data.text, 'utf-8'))
