@@ -6,6 +6,8 @@ def downloadUpdate():
     data = requests.get(remote_url)
     with open(local_file, 'wb') as file:
         file.write(data.content)
+        
+    import update
 
 
 remote_url = 'https://raw.githubusercontent.com/kevasesk/kizaru-app/master/version'
@@ -21,8 +23,6 @@ if data.status_code == 200:
             downloadUpdate()
     else:
         downloadUpdate()
-
-    import update
 
 
 import app
