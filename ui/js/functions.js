@@ -5,7 +5,7 @@ var interval
 var UserAgent = null
 var oldSuccessCount = 0
 
-$.toast = function(text, type='info', duration=1000, close=false){
+$.toast = function(text, type='info', duration=2000, close=false){
 	switch (type) {
 		case 'success': //'linear-gradient(to right, #c8003a, #ff5732 50%)'//
 			color = '#56ab2f' // green
@@ -80,31 +80,33 @@ async function logout() {
 	return true
 }
 
-async function loginOnSite(targetId = null) {
-	isLoginButtonDisabled = $('#profile-login-btn').attr('disabled')
+async function loginOnSite(targetId = null, parentId = null) {
+	isLoginButtonDisabled = $('#'+targetId+' [data-role="profile-login-btn"]').attr('disabled')
 	if (!authorized && !isLoginButtonDisabled) {
-		username = $('#profile-username').val()
-		password = $('#profile-password').val()
+		username = $('#'+targetId+' [data-role="profile-username"]').val()
+		password = $('#'+targetId+' [data-role="profile-password"]').val()
 		if (username != '' && password != '' && UserAgent != null) {
 			$.toast('Выполняется вход, ожидайте...', 'info')
-			$('#profile-login-btn').attr('disabled', true)
+			$('#'+targetId+' [data-role="profile-login-btn"]').attr('disabled', true)
 			let result = await eel.login_on_site(username, password, UserAgent)()
+			console.log(result)
 			if (result != null) {
 				authorized = true
-				$('#profile-pic').attr('src', result)
-				$('#profile-login-btn').attr('disabled', false)
-				$('#profile-username').attr('readonly', true)
-				$('#profile-password').attr('readonly', true)
-				$('#profile-login-btn').html('Выход');
+				$('#'+targetId+' [data-role="profile-pic"]').attr('src', result)
+				$('#'+targetId+' [data-role="profile-login-btn"]').attr('disabled', false)
+				$('#'+targetId+' [data-role="profile-username"]').attr('readonly', true)
+				$('#'+targetId+' [data-role="profile-password"]').attr('readonly', true)
+				$('#'+targetId+' [data-role="profile-login-btn"]').html('Выход');
 				$('button[data-bs-target="#'+targetId+'"] span').html(username);
 				$('button[data-bs-target="#'+targetId+'"] img').attr('src', result);
 				$('#'+targetId).data('username', username);
+				$('#'+parentId).data('username', username);
 			
 				return true
 			}
 			else {
 				$.toast('Не удалось войти', 'error')
-				$('#profile-login-btn').attr('disabled', false)
+				$('#'+targetId+' [data-role="profile-login-btn"]').attr('disabled', false)
 				return false
 			}
 		}
@@ -114,6 +116,7 @@ async function loginOnSite(targetId = null) {
 		}
 	} else if (authorized) {
 		logoutOnSite()
+		loginOnSite(targetId)
 	}
 }
 
@@ -130,16 +133,37 @@ async function logoutOnSite() {
 		return true
 	}
 }
+async function closeTab(targetId, childId){
+	var confirmResult = confirm('Вы уверенны что хотите закрыть эту анкету?');
+	if(confirmResult){
+		var username = $('#'+targetId).data('username');
+		console.log(username);
+		let result = await eel.closeTab(username)()
+		if(result === true){
+			$('#'+targetId).remove();
+			$('#'+childId).remove();
+			$.toast('Вы вышли из анкеты', 'success')
+		}else{
+			$.toast('Что-то пошло не так при закрытии таба.', 'error')
+		}
+	}
+}
 
 async function saveLinks(targetId){
 	var username = $('#'+targetId).data('username');
 	if(username){
 		var confirmResult = confirm('Вы уверенны что хотите сохранить текущий список ссылок? Сохранённый будет перезаписан.');
 		if(confirmResult){
-			links = $('#mail-links').val().split('\n');
+			links = $('#'+targetId+' [data-role="mail-links"]').val().split('\n');
 			let result = await eel.save_links(username, links)()
-			console.log(result);
+			if(result === true){
+				$.toast('Ссылки сохранены', 'success')
+			}else{
+				$.toast('Что-то пошло не так при сохранении ссылок.', 'error')
+			}
 		}
+	}else{
+		$.toast('Вам нужно сначало залогинится в анкету', 'warning')
 	}
 	return true;
 }
@@ -156,13 +180,27 @@ async function loadLinks(targetId){
 				for(var i=0;i< result.length ;i++){
 					links += result[i] + '\n';
 				}
-				$('#mail-links').val(links);
+				$('#'+targetId+' [data-role="mail-links"]').val(links);
+				$.toast('Ссылки загруженны', 'success')
 			}else{
-				console.log(result);
+				$.toast('Что-то пошло не так загрузке ссылок.', 'error')
 			}
 		}
+	}else{
+		$.toast('Вам нужно сначало залогинится в анкету', 'warning')
 	}
 	return true;
+}
+
+async function initAccounts(){
+	let accounts = await eel.load_accounts()()
+	if(accounts.length == 0){
+		$('#newAccountItem').trigger('click');
+	}else{
+		for (var username in accounts) {
+			createNewAccount(accounts[username]);
+		}
+	}
 }
 
 function updateProgressBar(now, max) {
@@ -233,8 +271,8 @@ async function getSuccessCount() {
 	}
 }
 
-async function setUserAgent() {
-	ua = $.trim($('#ua').val())
+async function setUserAgent(targetId) {
+	ua = $.trim($('#'+targetId+' [data-role="ua"]').val())
 	if (ua != '' && ua.match(/^[a-zA-Z0-9 \s\\.,/:;\+\-_\)\(\[\]]*$/gm) && ua.length >= 16) {
 		UserAgent = ua
 		let result = await eel.set_user_agent(ua)()
@@ -247,48 +285,56 @@ async function setUserAgent() {
 	}
 }
 
-async function getUserAgent() {
+async function getUserAgent(targetId) {
 	let result = await eel.get_user_agent()()
 	if (result != null) {
-		$('#ua').val(result)
+		$('#'+targetId+' [data-role="ua"]').val(result)
 		UserAgent = result
 		return true
 	}
 }
 
-var createNewAccount = function(){
+var createNewAccount = function(account = {}, focus = false){
 	var tabContent = $('#tabContent');
 
 	var navItemTemplate = $('#navItemTemplate');
 	var navContentTemplate = $('#navContentTemplate');
 	
 	var id = Date.now();
-	var target = 'tab' + Date.now();
+	var target = 'tab' + id;
 
 	var templateText = navItemTemplate.html();
+	var accountImage = account.image ?? 'img/userpic.jpg';
+	var accountUsername = account.username ?? '';
+	var accountUsernameData = account.username ?? 'Новый профиль';
+	var accountPasword = account.password ?? '';
+	var accountUa = account.ua ?? '';
+
 	templateText = templateText.replaceAll('${id}', id);
+	templateText = templateText.replaceAll('${childId}', target);
 	templateText = templateText.replaceAll('${target}', '#' + target);
-	templateText = templateText.replaceAll('${img}', 'img/userpic.jpg');
-	templateText = templateText.replaceAll('${label}', 'Новый профиль');
+	templateText = templateText.replaceAll('${img}', accountImage);
+	templateText = templateText.replaceAll('${username}', accountUsername);
+	templateText = templateText.replaceAll('${usernameData}', accountUsernameData);
 	$(templateText).insertBefore(".nav-item.add");
 
 	var templateContentText = navContentTemplate.html();
 	templateContentText = templateContentText.replaceAll('${id}', target);
+	templateContentText = templateContentText.replaceAll('${parentId}', id);
+	templateContentText = templateContentText.replaceAll('${img}', accountImage);
+	templateContentText = templateContentText.replaceAll('${username}', accountUsername);
+	templateContentText = templateContentText.replaceAll('${password}', accountPasword);
+	templateContentText = templateContentText.replaceAll('${ua}', accountUa);
 	tabContent.append(templateContentText);
 
-	$('button[data-bs-target="#'+target+'"]').trigger('click');
-	
-};
-var deleteTab = function(element){
-	var result = confirm("Вы уверены что хотите выйти из этого аккаунта?");
-	if(result){
-		$(element).parent('li').remove();
-		$($(element).data('target')).remove();
+	if(focus){
+		$('button[data-bs-target="#'+target+'"]').trigger('click');
 	}
+	
 };
 
 $(document).on('click', '#newAccountItem',function(){
-	createNewAccount();
+	createNewAccount({}, true);
 });
 
 $(document).on('click', '.nav-item .close',function(){

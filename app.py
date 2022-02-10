@@ -2,6 +2,7 @@ from traceback import print_exc  # line:2
 from threading import Thread  # line:3
 from random import randint  # line:4
 from time import sleep  # line:5
+from datetime import date
 import pickle  # line:6
 import json  # line:7
 import os  # line:8
@@ -119,12 +120,8 @@ def mailing(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, old_urls=[]
                 O0000O000O0O0OOO0, message, OO0O0O0O0O000OO0O)).text  # line:168
 
             SuccessCount += 1  # line:171
-        except Exception as e:  # line:173
-            f = open("debug.log", "a")
-            f.write(str(e))
-            f.write(str(traceback.format_exc()))
-            f.close()
-            print_exc()  # line:174
+        except Exception as e:
+            logging(traceback.format_exc())
     sleep(1)  # line:175
     Working = False  # line:176
     SuccessCount = 0  # line:177
@@ -134,6 +131,12 @@ def mailing(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, old_urls=[]
 def get_login_details():  # line:181
     return auth_file()  # line:182
     
+def logging(message):
+    f = open("debug.log", "a")
+    today = date.today()
+    f.write('\n' + today.strftime("%b-%d-%Y") + ' - ' + str(traceback.format_exc()))
+    f.close()
+
 
 @eel.expose
 def save_links(username, links):
@@ -143,15 +146,19 @@ def save_links(username, links):
         if os.path.exists(accountsFileName): 
             with open(accountsFileName, 'rb') as handle:
                 data = pickle.load(handle)
-                data[username] = links
+                if username not in data:
+                    data[username] = {}
+                data[username]['links'] = links
             with open(accountsFileName, 'wb+') as handle:   
                 pickle.dump(data, handle)
         else:  # line:36
             with open(accountsFileName, 'wb+') as handle:
-                data[username] = links
+                if username not in data:
+                    data[username] = {}
+                data[username]['links'] = links
                 pickle.dump(data, handle)
     except Exception as e:
-        return str(traceback.format_exc())
+        logging(traceback.format_exc())
 
 
     return True
@@ -165,11 +172,11 @@ def load_links(username):  # line:181
         if os.path.exists(accountsFileName): 
             with open(accountsFileName, 'rb') as handle:
                 data = pickle.load(handle)
-                return data[username]
+                return data[username]['links']
         else:  # line:36
             return {}
     except Exception as e:
-        return str(traceback.format_exc())
+        logging(traceback.format_exc())
 
     return True
 
@@ -201,6 +208,49 @@ def login(O0O0OOO00OOO00OOO, OOOOOO0O0O000O0OO, save_login_details=False):  # li
     except:  # line:207
         print_exc()  # line:208
         return False  # line:209
+
+def addAccount(username, password, ua, image):
+    try:
+        accountsFileName = 'accounts.pkl'
+        data = {}
+        if os.path.exists(accountsFileName) and os.path.getsize(accountsFileName) > 0: 
+            with open(accountsFileName, 'rb') as handle:
+                data = pickle.load(handle)
+                if username not in data:
+                    data[username] = {}
+                data[username]['password'] = password
+                data[username]['username'] = username
+                data[username]['image'] = image
+                data[username]['ua'] = ua
+            with open(accountsFileName, 'wb+') as handle:   
+                pickle.dump(data, handle)
+        else:  # line:36
+            with open(accountsFileName, 'wb+') as handle:
+                if username not in data:
+                    data[username] = {}
+                data[username]['password'] = password
+                data[username]['username'] = username
+                data[username]['image'] = image
+                data[username]['ua'] = ua
+                pickle.dump(data, handle)
+    except Exception as e:
+        logging(traceback.format_exc())
+
+
+@eel.expose
+def load_accounts():
+    try:
+        accountsFileName = 'accounts.pkl'
+        data = {}
+        if os.path.exists(accountsFileName) and os.path.getsize(accountsFileName) > 0: 
+            with open(accountsFileName, 'rb') as handle:
+                data = pickle.load(handle)
+                return data
+
+    except Exception as e:
+        logging(traceback.format_exc())
+        return []
+    return []
 
 
 @eel.expose  # line:212
@@ -234,9 +284,10 @@ def login_on_site(O00OO0O0OOOO0OOO0, O000O000O00O0000O, OO0OO00OO000O0O00):  # l
         OOO0O00000OOO00OO = O00O0O0O000O00OOO[
                             O00O0O0O000O00OOO.find(OO000O000O0OO0O00[0]) + len(OO000O000O0OO0O00[0]):]  # line:272
         OOO0O00000OOO00OO = OOO0O00000OOO00OO[:OOO0O00000OOO00OO.find(OO000O000O0OO0O00[1])]  # line:273
+        addAccount(O00OO0O0OOOO0OOO0, O000O000O00O0000O, OO0OO00OO000O0O00, OOO0O00000OOO00OO)
         return OOO0O00000OOO00OO  # line:275
-    except:  # line:276
-        print_exc()  # line:277
+    except Exception as e:
+        logging(traceback.format_exc())
         return None  # line:278
 
 
@@ -245,6 +296,24 @@ def logout_on_site():  # line:282
     global s  # line:283
     s = requests.Session()  # line:284
     return True  # line:285
+
+
+@eel.expose  # line:281
+def closeTab(username):
+    try:
+        accountsFileName = 'accounts.pkl'
+        data = {}
+        if os.path.exists(accountsFileName) and os.path.getsize(accountsFileName) > 0: 
+            with open(accountsFileName, 'rb') as handle:
+                data = pickle.load(handle)
+                logging(username)
+                del data[username]
+            with open(accountsFileName, 'wb+') as handle:
+                pickle.dump(data, handle)
+    except Exception as e:
+        logging(traceback.format_exc())
+
+    return True
 
 
 @eel.expose  # line:288
