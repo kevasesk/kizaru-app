@@ -9,9 +9,6 @@ import requests  # line:11
 import eel  # line:12
 import traceback  # line:13
 
-#Eel==0.14.0
-#requests==2.25.0
-
 auth_file_path = 'auth'  # line:14
 os.system('cd "%s"' % os.path.dirname(os.path.abspath(__file__)))  # line:17
 cfg = {
@@ -136,6 +133,45 @@ def mailing(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, old_urls=[]
 @eel.expose  # line:180
 def get_login_details():  # line:181
     return auth_file()  # line:182
+    
+
+@eel.expose
+def save_links(username, links):
+    try:
+        accountsFileName = 'accounts.pkl'
+        data = {}
+        if os.path.exists(accountsFileName): 
+            with open(accountsFileName, 'rb') as handle:
+                data = pickle.load(handle)
+                data[username] = links
+            with open(accountsFileName, 'wb+') as handle:   
+                pickle.dump(data, handle)
+        else:  # line:36
+            with open(accountsFileName, 'wb+') as handle:
+                data[username] = links
+                pickle.dump(data, handle)
+    except Exception as e:
+        return str(traceback.format_exc())
+
+
+    return True
+
+
+@eel.expose  # line:180
+def load_links(username):  # line:181
+    try:
+        accountsFileName = 'accounts.pkl'
+        data = {}
+        if os.path.exists(accountsFileName): 
+            with open(accountsFileName, 'rb') as handle:
+                data = pickle.load(handle)
+                return data[username]
+        else:  # line:36
+            return {}
+    except Exception as e:
+        return str(traceback.format_exc())
+
+    return True
 
 
 @eel.expose  # line:185

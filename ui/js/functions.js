@@ -98,6 +98,7 @@ async function loginOnSite(targetId = null) {
 				$('#profile-login-btn').html('Выход');
 				$('button[data-bs-target="#'+targetId+'"] span').html(username);
 				$('button[data-bs-target="#'+targetId+'"] img').attr('src', result);
+				$('#'+targetId).data('username', username);
 			
 				return true
 			}
@@ -128,6 +129,40 @@ async function logoutOnSite() {
 		$('#profile-password').attr('readonly', false)
 		return true
 	}
+}
+
+async function saveLinks(targetId){
+	var username = $('#'+targetId).data('username');
+	if(username){
+		var confirmResult = confirm('Вы уверенны что хотите сохранить текущий список ссылок? Сохранённый будет перезаписан.');
+		if(confirmResult){
+			links = $('#mail-links').val().split('\n');
+			let result = await eel.save_links(username, links)()
+			console.log(result);
+		}
+	}
+	return true;
+}
+
+async function loadLinks(targetId){
+	var username = $('#'+targetId).data('username');
+	if(username){
+		var confirmResult = confirm('Вы уверенны что хотите загрузить сохраненный список ссылок? Текущий будет утерян.');
+		if(confirmResult){
+			let result = await eel.load_links(username)()
+			console.log(Array.isArray(result))
+			if(Array.isArray(result)){
+				var links = '';
+				for(var i=0;i< result.length ;i++){
+					links += result[i] + '\n';
+				}
+				$('#mail-links').val(links);
+			}else{
+				console.log(result);
+			}
+		}
+	}
+	return true;
 }
 
 function updateProgressBar(now, max) {
