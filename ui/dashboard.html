@@ -31,7 +31,7 @@
 
 	<template id="navItemTemplate">
 		<li class="nav-item" id="${id}" data-username="${username}">
-			<button class="nav-link block-head" data-bs-toggle="tab" data-bs-target="${target}" type="button">
+			<button class="nav-link block-head" data-bs-toggle="tab" data-bs-target="${target}" type="button" data-id="${id}" data-child-id="${childId}">
 				<img class="profile-pic-small" data-target="${target}" src="${img}">
 				<span>${usernameData}</snap>
 			</button>
@@ -40,7 +40,7 @@
 	</template>
 
 	<template id="navContentTemplate">
-		<div class="tab-pane fade" id="${id}" data-username="${username}">
+		<div class="tab-pane fade" id="${id}" data-username="${username}" data-parent-id="${parentId}">
 				<div class="row align-items-center">
 					<div class="col-2">
 						<img data-role="profile-pic" src="${img}">
@@ -90,7 +90,7 @@
 				</div>
 				<div class="row">
 					<div class="col">
-						<button id="start-btn" type="button" class="btn btn-block btn-dark start-btn" onclick="start('${id}')">Начать работу</button>
+						<button data-role="start-btn" type="button" class="btn btn-block btn-dark start-btn" onclick="start('${id}')">Начать работу</button>
 					</div>
 				</div>
 		</div>

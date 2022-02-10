@@ -89,14 +89,14 @@ async function loginOnSite(targetId = null, parentId = null) {
 			$.toast('Выполняется вход, ожидайте...', 'info')
 			$('#'+targetId+' [data-role="profile-login-btn"]').attr('disabled', true)
 			let result = await eel.login_on_site(username, password, UserAgent)()
-			console.log(result)
+			console.log(username,password);
 			if (result != null) {
 				authorized = true
 				$('#'+targetId+' [data-role="profile-pic"]').attr('src', result)
 				$('#'+targetId+' [data-role="profile-login-btn"]').attr('disabled', false)
 				$('#'+targetId+' [data-role="profile-username"]').attr('readonly', true)
 				$('#'+targetId+' [data-role="profile-password"]').attr('readonly', true)
-				$('#'+targetId+' [data-role="profile-login-btn"]').html('Выход');
+				$('#'+targetId+' [data-role="profile-login-btn"]').remove();
 				$('button[data-bs-target="#'+targetId+'"] span').html(username);
 				$('button[data-bs-target="#'+targetId+'"] img').attr('src', result);
 				$('#'+targetId).data('username', username);
@@ -124,12 +124,12 @@ async function logoutOnSite() {
 	if (authorized) {
 		authorized = false
 		let result = await eel.logout_on_site()()
-		$('#profile-pic').attr('src', 'img/userpic.jpg')
-		$('#profile-login-btn').html('Вход')
+		// $('#profile-pic').attr('src', 'img/userpic.jpg')
+		// $('#profile-login-btn').html('Вход')
 		// $('#profile-username').val('')
 		// $('#profile-password').val('')
-		$('#profile-username').attr('readonly', false)
-		$('#profile-password').attr('readonly', false)
+		// $('#profile-username').attr('readonly', false)
+		// $('#profile-password').attr('readonly', false)
 		return true
 	}
 }
@@ -339,6 +339,19 @@ $(document).on('click', '#newAccountItem',function(){
 
 $(document).on('click', '.nav-item .close',function(){
 	deleteTab(this);
+});
+
+$(document).on('click', 'button[data-bs-target]',function(){
+	if($(this).not('.acitve')){
+		var username = $($(this).data('bs-target') + ' [data-role="profile-username"]').val();
+		var password = $($(this).data('bs-target') + ' [data-role="profile-password"]').val();
+		if (username != '' && password != '') {
+			var formId = $(this).data('child-id');
+			var tabId = $(this).data('id');
+			loginOnSite(formId, tabId);
+		}
+	}
+
 });
 
 
