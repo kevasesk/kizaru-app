@@ -25,12 +25,11 @@
 		<div class="tab-content" id="tabContent"></div>
 		<script>
 			initAccounts();
-			 
 		</script>
 	</div>
 
 	<template id="navItemTemplate">
-		<li class="nav-item" id="${id}" data-username="${username}">
+		<li class="nav-item username" id="${id}" data-username="${username}">
 			<button class="nav-link block-head" data-bs-toggle="tab" data-bs-target="${target}" type="button" data-id="${id}" data-child-id="${childId}">
 				<img class="profile-pic-small" data-target="${target}" src="${img}">
 				<span>${usernameData}</snap>
@@ -64,7 +63,7 @@
 					<div class="col-2">
 						<button class="btn btn-dark float-right" type="button" onclick="setUserAgent('${id}')">Сохранить</button>
 						<script>
-							getUserAgent('${id}')
+							//getUserAgent('${id}')
 						</script>
 					</div>
 				</div>
@@ -85,7 +84,7 @@
 				<div class="row">
 					<div class="col">
 						<h6 class="block-head">Текст рассылки</h6>
-						<textarea class="block" id="mail-text"></textarea>
+						<textarea class="block" data-role="mail-text"></textarea>
 					</div>
 				</div>
 				<div class="row">
@@ -119,4 +118,9 @@
 			</div>
 		</div>
 	</div>
+</div>
+
+<!-- Login Modal -->
+<div class="login-modal" id="login-modal" style="display:none;">
+	<img src="img/loader.gif" width="30" height="30"/>
 </div>

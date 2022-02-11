@@ -38,6 +38,27 @@ Working = False  # line:42
 SuccessCount = 0  # line:43
 Progress = {'urls': [], 'stop_on': -1}  # line:44
 
+def mailing_dump(links, text, UserAgent, old_urls=[]):  # links, text, UserAgent
+    global Working, SuccessCount, Progress, s  # line:48
+    for OO00O000OO0O000OO, O0O00O0O0OOOO00OO in enumerate(links):  # line:49
+        if not Working:  # line:50
+            break  # line:51
+        if old_urls == links and OO00O000OO0O000OO < Progress['stop_on'] + 1:  # line:52
+            SuccessCount += 1  # line:53
+            continue  # line:54
+        try:  # line:55
+            sleep(1)  # line:66
+            logging('links' + ' '.join(links))
+            logging('text:' + text)
+            logging('UserAgent:' + UserAgent)
+            logging('---------')
+            SuccessCount += 1  # line:171
+        except Exception as e:
+            logging(traceback.format_exc())
+    sleep(1)  # line:175
+    Working = False  # line:176
+    SuccessCount = 0  # line:177
+
 
 def mailing(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, old_urls=[]):  # line:47
     global Working, SuccessCount, Progress, s  # line:48
@@ -134,7 +155,7 @@ def get_login_details():  # line:181
 def logging(message):
     f = open("debug.log", "a")
     today = date.today()
-    f.write('\n' + today.strftime("%b-%d-%Y") + ' - ' + str(traceback.format_exc()))
+    f.write('\n' + today.strftime("%b-%d-%Y-%T") + ' - ' + str(message))
     f.close()
 
 
@@ -306,7 +327,6 @@ def closeTab(username):
         if os.path.exists(accountsFileName) and os.path.getsize(accountsFileName) > 0: 
             with open(accountsFileName, 'rb') as handle:
                 data = pickle.load(handle)
-                logging(username)
                 del data[username]
             with open(accountsFileName, 'wb+') as handle:
                 pickle.dump(data, handle)
@@ -346,19 +366,35 @@ def get_success_count():  # line:312
 
 
 @eel.expose  # line:316
-def set_user_agent(O0OOOO0O00OOOOO00):  # line:317
-    with open('User-Agent', 'w+', encoding='utf8') as OOO0O0OO0O0O0OO00:  # line:318
-        OOO0O0OO0O0O0OO00.write(O0OOOO0O00OOOOO00)  # line:319
-    return True  # line:320
+def set_user_agent(ua, username):  # line:317
+    try:
+        accountsFileName = 'accounts.pkl'
+        data = {}
+        if os.path.exists(accountsFileName) and os.path.getsize(accountsFileName) > 0: 
+            with open(accountsFileName, 'rb') as handle:
+                data = pickle.load(handle)
+                data[username]['ua'] = ua
+            with open(accountsFileName, 'wb+') as handle:
+                pickle.dump(data, handle)
+    except Exception as e:
+        logging(traceback.format_exc())
+
+    return True
 
 
 @eel.expose  # line:323
-def get_user_agent():  # line:324
-    try:  # line:325
-        with open('User-Agent', 'r', encoding='utf8') as OO00OO00OOOO00OO0:  # line:326
-            return (OO00OO00OOOO00OO0.read())  # line:327
-    except:  # line:328
-        return None  # line:329
+def get_user_agent(username):  # line:324
+    try:
+        accountsFileName = 'accounts.pkl'
+        data = {}
+        if os.path.exists(accountsFileName) and os.path.getsize(accountsFileName) > 0: 
+            with open(accountsFileName, 'rb') as handle:
+                data = pickle.load(handle)
+                return data[username]['ua']
+    except Exception as e:
+        logging(traceback.format_exc())
+
+    return None
 
 
 eel.init('ui')  # line:332

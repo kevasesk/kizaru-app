@@ -332,9 +332,33 @@ button.close:hover {
 #accountsTablist .nav-item{
 	background-color: #444447;
 }
+#accountsTablist .nav-item.username{
+	width: 200px;
+}
+#accountsTablist .nav-item.username .nav-link{
+	width: 175px;
+}
 #accountsTablist .nav-link{
 	border-radius: 0px;
 }
 #accountsTablist .nav-link.active{
 	border: black;
+}
+
+.login-modal{
+	background-color: black;
+	opacity: 0.5;
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	width: 100%; /* Full width */
+	height: 100%; /* Full height */
+}
+.login-modal img{
+	position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -50px;
+    margin-left: -50px;
 }

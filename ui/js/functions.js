@@ -2,7 +2,6 @@ var AccountName
 var working = false
 var authorized = false
 var interval
-var UserAgent = null
 var oldSuccessCount = 0
 
 $.toast = function(text, type='info', duration=2000, close=false){
@@ -80,16 +79,19 @@ async function logout() {
 	return true
 }
 
-async function loginOnSite(targetId = null, parentId = null) {
+async function loginOnSite(targetId = null, parentId = null, onlySwitch = false) {
 	isLoginButtonDisabled = $('#'+targetId+' [data-role="profile-login-btn"]').attr('disabled')
 	if (!authorized && !isLoginButtonDisabled) {
 		username = $('#'+targetId+' [data-role="profile-username"]').val()
 		password = $('#'+targetId+' [data-role="profile-password"]').val()
-		if (username != '' && password != '' && UserAgent != null) {
-			$.toast('Выполняется вход, ожидайте...', 'info')
+		ua = $('#'+targetId+' [data-role="ua"]').val()
+		if (username != '' && password != '' && ua != null) {
+			if(onlySwitch){
+				$.toast('Выполняется вход, ожидайте...', 'info')
+			}
+			$('#login-modal').show();
 			$('#'+targetId+' [data-role="profile-login-btn"]').attr('disabled', true)
-			let result = await eel.login_on_site(username, password, UserAgent)()
-			console.log(username,password);
+			let result = await eel.login_on_site(username, password, ua)()
 			if (result != null) {
 				authorized = true
 				$('#'+targetId+' [data-role="profile-pic"]').attr('src', result)
@@ -101,10 +103,12 @@ async function loginOnSite(targetId = null, parentId = null) {
 				$('button[data-bs-target="#'+targetId+'"] img').attr('src', result);
 				$('#'+targetId).data('username', username);
 				$('#'+parentId).data('username', username);
+				$('#login-modal').hide();
 			
 				return true
 			}
 			else {
+				$('#login-modal').hide();
 				$.toast('Не удалось войти', 'error')
 				$('#'+targetId+' [data-role="profile-login-btn"]').attr('disabled', false)
 				return false
@@ -137,7 +141,6 @@ async function closeTab(targetId, childId){
 	var confirmResult = confirm('Вы уверенны что хотите закрыть эту анкету?');
 	if(confirmResult){
 		var username = $('#'+targetId).data('username');
-		console.log(username);
 		let result = await eel.closeTab(username)()
 		if(result === true){
 			$('#'+targetId).remove();
@@ -208,17 +211,18 @@ function updateProgressBar(now, max) {
 	$('#progress').css('width', (now/max*100) + '%')
 }
 
-async function start() {
+async function start(targetId) {
 	if (working) {
 		// просто открыть модальное окно
 		$('#progressModal').modal('show')
 
 	} else {
 		// запустить рассылку
-		links = $('#mail-links').val().split('\n')
-		text = $('#mail-text').val()
+		links = $('#'+targetId+' [data-role="mail-links"]').val().split('\n')
+		text = $('#'+targetId+' [data-role="mail-text"]').val()
+		ua = $('#'+targetId+' [data-role="ua"]').val()
 		updateProgressBar(0, links.length)
-		if (links.length != 0 && text != '' && UserAgent != null && authorized) {
+		if (links.length != 0 && text != '' && ua != null && authorized) {
 			working = true
 			$('#progressModal').modal('show')
 			interval = setInterval(async function(){
@@ -232,8 +236,9 @@ async function start() {
 				oldSuccessCount = successCount
 				updateProgressBar(successCount, links.length)
 			}, 1000)
-			$('#start-btn').html('Работаем...')
-			let result = await eel.start_mailing(links, text, UserAgent)()
+			$('#'+targetId+' [data-role="start-btn"]').html('Работаем...')
+			$('#progressModal').data('target-id', targetId);
+			let result = await eel.start_mailing(links, text, ua)()
 			return true
 		}
 		else {
@@ -248,7 +253,8 @@ async function stop(frontendOnly=false) {
 		working = false
 		$('#progressModal').modal('hide')
 		updateProgressBar(0, 0)
-		$('#start-btn').html('Начать работу')
+		var targetId = $('#progressModal').data('target-id');
+		$('#'+targetId+' [data-role="start-btn"]').html('Начать работу')
 		if (!frontendOnly) {
 			let result = await eel.stop_mailing()()
 		}
@@ -272,10 +278,10 @@ async function getSuccessCount() {
 }
 
 async function setUserAgent(targetId) {
-	ua = $.trim($('#'+targetId+' [data-role="ua"]').val())
+	ua = $.trim($('#'+targetId+' [data-role="ua"]').val());
+	username = $.trim($('#'+targetId).data('username'));
 	if (ua != '' && ua.match(/^[a-zA-Z0-9 \s\\.,/:;\+\-_\)\(\[\]]*$/gm) && ua.length >= 16) {
-		UserAgent = ua
-		let result = await eel.set_user_agent(ua)()
+		let result = await eel.set_user_agent(ua, username)()
 		$.toast('Успешно', 'success')
 		return true
 	}
@@ -286,10 +292,10 @@ async function setUserAgent(targetId) {
 }
 
 async function getUserAgent(targetId) {
-	let result = await eel.get_user_agent()()
+	username = $.trim($('#'+targetId).data('username'))
+	let result = await eel.get_user_agent(username)()
 	if (result != null) {
 		$('#'+targetId+' [data-role="ua"]').val(result)
-		UserAgent = result
 		return true
 	}
 }
@@ -348,7 +354,7 @@ $(document).on('click', 'button[data-bs-target]',function(){
 		if (username != '' && password != '') {
 			var formId = $(this).data('child-id');
 			var tabId = $(this).data('id');
-			loginOnSite(formId, tabId);
+			loginOnSite(formId, tabId, true);
 		}
 	}
 
