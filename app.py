@@ -193,7 +193,10 @@ def load_links(username):  # line:181
         if os.path.exists(accountsFileName): 
             with open(accountsFileName, 'rb') as handle:
                 data = pickle.load(handle)
-                return data[username]['links']
+                if "links" in data[username]:
+                    return data[username]['links']
+                else:
+                    return []
         else:  # line:36
             return {}
     except Exception as e:
@@ -293,7 +296,7 @@ def login_on_site(O00OO0O0OOOO0OOO0, O000O000O00O0000O, OO0OO00OO000O0O00):  # l
         O0O0O0O00O0O0OOO0 = O00O0O0O000O00OOO[
                             O00O0O0O000O00OOO.find(O000O00O000OOOO00[0]) + len(O000O00O000OOOO00[0]):]  # line:238
         O0O0O0O00O0O0OOO0 = O0O0O0O00O0O0OOO0[:O0O0O0O00O0O0OOO0.find(O000O00O000OOOO00[1])]  # line:239
-        O00O0O0O000O00OOO = s.post('https://www.dream-singles.com/dating-login.php?loc=', headers={
+        requestResult = s.post('https://www.dream-singles.com/dating-login.php?loc=', headers={
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
             "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
             "Connection": "keep-alive", "Content-Type": "application/x-www-form-urlencoded", "DNT": "1",
@@ -303,14 +306,18 @@ def login_on_site(O00OO0O0OOOO0OOO0, O000O000O00O0000O, OO0OO00OO000O0O00):  # l
             "Upgrade-Insecure-Requests": "1", "User-Agent": OO0OO00OO000O0O00, },
                                    data={'token': O0O0O0O00O0O0OOO0, 'login': O00OO0O0OOOO0OOO0,
                                          'password': O000O000O00O0000O, '__tcAction': 'loginMember',
-                                         'submit': ''}).text  # line:268
+                                         'submit': ''})  # line:268
+        O00O0O0O000O00OOO = requestResult.text
         OO000O000O0OO0O00 = (
         '<a href="#" class="dropdown-toggle photo" data-toggle="dropdown"><img src="', '"')  # line:271
         OOO0O00000OOO00OO = O00O0O0O000O00OOO[
                             O00O0O0O000O00OOO.find(OO000O000O0OO0O00[0]) + len(OO000O000O0OO0O00[0]):]  # line:272
         OOO0O00000OOO00OO = OOO0O00000OOO00OO[:OOO0O00000OOO00OO.find(OO000O000O0OO0O00[1])]  # line:273
-        addAccount(O00OO0O0OOOO0OOO0, O000O000O00O0000O, OO0OO00OO000O0O00, OOO0O00000OOO00OO)
-        return OOO0O00000OOO00OO  # line:275
+        if OOO0O00000OOO00OO.startswith('https://'):
+            addAccount(O00OO0O0OOOO0OOO0, O000O000O00O0000O, OO0OO00OO000O0O00, OOO0O00000OOO00OO)
+            return OOO0O00000OOO00OO  # line:275
+        else:
+            return None
     except Exception as e:
         logging(traceback.format_exc())
         return None  # line:278

@@ -323,7 +323,7 @@ button.close:hover {
 	border-radius: 0px;
 }
 #accountsTablist button.block-head.active{
-	background-color: #7f7f7f;
+	background-color: #559139;
 }
 #accountsTablist li{
 	display: inline-flex; 

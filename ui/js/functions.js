@@ -218,11 +218,11 @@ async function start(targetId) {
 
 	} else {
 		// запустить рассылку
-		links = $('#'+targetId+' [data-role="mail-links"]').val().split('\n')
+		links = $.trim($('#'+targetId+' [data-role="mail-links"]').val()).split('\n')
 		text = $('#'+targetId+' [data-role="mail-text"]').val()
 		ua = $('#'+targetId+' [data-role="ua"]').val()
 		updateProgressBar(0, links.length)
-		if (links.length != 0 && text != '' && ua != null && authorized) {
+		if (links.length != 0 && text != '' && ua != '' && authorized) {
 			working = true
 			$('#progressModal').modal('show')
 			interval = setInterval(async function(){
@@ -348,16 +348,13 @@ $(document).on('click', '.nav-item .close',function(){
 });
 
 $(document).on('click', 'button[data-bs-target]',function(){
-	if($(this).not('.acitve')){
-		var username = $($(this).data('bs-target') + ' [data-role="profile-username"]').val();
-		var password = $($(this).data('bs-target') + ' [data-role="profile-password"]').val();
-		if (username != '' && password != '') {
-			var formId = $(this).data('child-id');
-			var tabId = $(this).data('id');
-			loginOnSite(formId, tabId, true);
-		}
+	var username = $($(this).data('bs-target') + ' [data-role="profile-username"]').val();
+	var password = $($(this).data('bs-target') + ' [data-role="profile-password"]').val();
+	if (username != '' && password != '') {
+		var formId = $(this).data('child-id');
+		var tabId = $(this).data('id');
+		loginOnSite(formId, tabId, true);
 	}
-
 });
 
 
