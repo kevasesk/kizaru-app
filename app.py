@@ -204,10 +204,14 @@ def load_links(username):  # line:181
 
 @eel.expose  # line:185
 def logout():  # line:186
-    OOO0O000000O0OO0O = auth_file()  # line:187
-    if OOO0O000000O0OO0O is not None:  # line:188
-        OOO0O000000O0OO0O['auto_login'] = False  # line:189
-        auth_file(OOO0O000000O0OO0O)  # line:190
+    try:
+        OOO0O000000O0OO0O = auth_file()  # line:187
+        if OOO0O000000O0OO0O is not None:  # line:188
+            OOO0O000000O0OO0O['auto_login'] = False  # line:189
+            auth_file(OOO0O000000O0OO0O)  # line:190
+    except Exception as e:
+        logging(traceback.format_exc())
+
     return True  # line:191
 
 
@@ -226,8 +230,8 @@ def login(O0O0OOO00OOO00OOO, OOOOOO0O0O000O0OO, save_login_details=False):  # li
                 if os.path.exists(auth_file_path):  # line:204
                     os.remove(auth_file_path)  # line:205
         return OOOO0O0O000O00OOO.json()['success']  # line:206
-    except:  # line:207
-        print_exc()  # line:208
+    except Exception as e:  # line:207
+        logging(traceback.format_exc())
         return False  # line:209
 
 def addAccount(username, password, ua, image):
@@ -346,8 +350,8 @@ def start_mailing(O00OO000O0O00O00O, O00O0OO000000OOOO, O000OO00O00OOO000):  # l
                args=(O00OO000O0O00O00O, O00O0OO000000OOOO, O000OO00O00OOO000, Progress['urls'])).start()  # line:294
         Progress['urls'] = O00OO000O0O00O00O  # line:295
         return True  # line:296
-    except:  # line:297
-        print_exc()  # line:298
+    except Exception as e:  # line:297
+        logging(traceback.format_exc())
         return False  # line:299
 
 
