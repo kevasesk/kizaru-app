@@ -89,6 +89,13 @@
 				</div>
 				<div class="row">
 					<div class="col">
+						<input type="hidden" data-role="gallery-image-data-id"/>
+						<img src="img/userpic.jpg" data-role="gallery-image-src" width="70" height="100"/>
+						<button type="button" class="btn btn-dark" onclick="openGallery('${id}');">Выбрать картинку</button>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
 						<button data-role="start-btn" type="button" class="btn btn-block btn-dark start-btn" onclick="start('${id}')">Начать работу</button>
 					</div>
 				</div>
@@ -126,10 +133,10 @@
 </div>
 
 <!-- Gallery trigger modal -->
-<button type="button" class="btn btn-primary" onclick="openGallery();">Выбрать картинку</button>
+
   
 <!-- Gallery Modal -->
-<div class="modal fade" id="galleryModal" tabindex="-1" role="dialog">
+<div class="modal fade" id="galleryModal" tabindex="-1" role="dialog"  aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -139,25 +146,17 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<div class="gallery-items">
-					<div class="gallery-item-wrapper">
-						<img src="https://via.placeholder.com/200" />
-					</div>
-					<div class="gallery-item-wrapper">
-						<img src="https://via.placeholder.com/200"/>
-					</div>
-					<div class="gallery-item-wrapper">
-						<img src="https://via.placeholder.com/200" />
-					</div>
-					<div class="gallery-item-wrapper">
-						<img src="https://via.placeholder.com/200" />
-					</div>
-				</div>
+				<div class="gallery-items"></div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeGallery();">Закрыть</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeGallery();">Отмена</button>
 				<button type="button" class="btn btn-success" onclick="saveImage();">Выбрать картинку</button>
 			</div>
 		</div>
 	</div>
+	<template id="galleryImageTemplate">
+		<div class="gallery-item-wrapper">
+			<img src="${src}" data-id="${dataId}" width="160" height="200"/>
+		</div>
+	</template>
 </div>

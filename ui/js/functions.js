@@ -221,8 +221,9 @@ async function start(targetId) {
 		links = $.trim($('#'+targetId+' [data-role="mail-links"]').val()).split('\n')
 		text = $('#'+targetId+' [data-role="mail-text"]').val()
 		ua = $('#'+targetId+' [data-role="ua"]').val()
+		imageId = $('#'+targetId+' [data-role="gallery-image-data-id"]').val()
 		updateProgressBar(0, links.length)
-		if (links.length != 0 && text != '' && ua != '' && authorized) {
+		if (links.length != 0 && text != '' && ua != '' && authorized && imageId !='') {
 			working = true
 			$('#progressModal').modal('show')
 			interval = setInterval(async function(){
@@ -238,7 +239,7 @@ async function start(targetId) {
 			}, 1000)
 			$('#'+targetId+' [data-role="start-btn"]').html('Работаем...')
 			$('#progressModal').data('target-id', targetId);
-			let result = await eel.start_mailing(links, text, ua)()
+			let result = await eel.start_mailing(links, text, ua, imageId)()
 			return true
 		}
 		else {

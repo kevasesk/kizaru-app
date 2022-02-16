@@ -9,6 +9,7 @@ import os  # line:8
 import requests  # line:11
 import eel  # line:12
 import traceback  # line:13
+import re
 
 auth_file_path = 'auth'  # line:14
 os.system('cd "%s"' % os.path.dirname(os.path.abspath(__file__)))  # line:17
@@ -60,7 +61,7 @@ def mailing_dump(links, text, UserAgent, old_urls=[]):  # links, text, UserAgent
     SuccessCount = 0  # line:177
 
 
-def mailing(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, old_urls=[]):  # line:47
+def mailing(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, imageId, old_urls=[]):  # line:47
     global Working, SuccessCount, Progress, s  # line:48
     for OO00O000OO0O000OO, O0O00O0O0OOOO00OO in enumerate(OOO00OOOO0O0OOOOO):  # line:49
         if not Working:  # line:50
@@ -105,21 +106,23 @@ def mailing(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, old_urls=[]
             OOOO000O0O0O0O0O0 = OO0O0000OO00O000O[
                                 OO0O0000OO00O000O.find(_O0OO0O0O00OOO0O00[0]) + len(_O0OO0O0O00OOO0O00[0]):]  # line:105
             OOOO000O0O0O0O0O0 = OOOO000O0O0O0O0O0[:OOOO000O0O0O0O0O0.find(_O0OO0O0O00OOO0O00[1])]  # line:106
-            sleep(randint(cfg['DELAY_BETWEEN_ACTIONS'][0], cfg['DELAY_BETWEEN_ACTIONS'][1]))  # line:109
-            OO0O0000OO00O000O = s.get(
-                'https://www.dream-singles.com/members/gallery.php?__tcAction=loadImages&selectable=1',
-                headers={"Accept": "*/*", "Accept-Encoding": "gzip, deflate, br",
-                         "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3", "Connection": "keep-alive",
-                         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8", "DNT": "1",
-                         "Host": "www.dream-singles.com", "Referer": O0O00O0O0OOOO00OO, "Sec-Fetch-Dest": "empty",
-                         "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-origin", "User-Agent": O0OOO00OOOO00OOOO,
-                         "X-Requested-With": "XMLHttpRequest", }).text  # line:128
-            _O0OO0O0O00OOO0O00 = (
-            r'<div class=\"col-xs-6 col-sm-6 col-md-4 col-xl-3 text-center gallery-media-wrapper\" data-id=\"',
-            r'\"')  # line:129
-            OO0O0O0O0O000OO0O = OO0O0000OO00O000O[
-                                OO0O0000OO00O000O.find(_O0OO0O0O00OOO0O00[0]) + len(_O0OO0O0O00OOO0O00[0]):]  # line:130
-            OO0O0O0O0O000OO0O = OO0O0O0O0O000OO0O[:OO0O0O0O0O000OO0O.find(_O0OO0O0O00OOO0O00[1])]  # line:131
+
+            # sleep(randint(cfg['DELAY_BETWEEN_ACTIONS'][0], cfg['DELAY_BETWEEN_ACTIONS'][1]))  # line:109
+            # OO0O0000OO00O000O = s.get(
+            #     'https://www.dream-singles.com/members/gallery.php?__tcAction=loadImages&selectable=1',
+            #     headers={"Accept": "*/*", "Accept-Encoding": "gzip, deflate, br",
+            #              "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3", "Connection": "keep-alive",
+            #              "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8", "DNT": "1",
+            #              "Host": "www.dream-singles.com", "Referer": O0O00O0O0OOOO00OO, "Sec-Fetch-Dest": "empty",
+            #              "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-origin", "User-Agent": O0OOO00OOOO00OOOO,
+            #              "X-Requested-With": "XMLHttpRequest", }).text  # line:128
+            # _O0OO0O0O00OOO0O00 = (
+            # r'<div class=\"col-xs-6 col-sm-6 col-md-4 col-xl-3 text-center gallery-media-wrapper\" data-id=\"',
+            # r'\"')  # line:129
+            # OO0O0O0O0O000OO0O = OO0O0000OO00O000O[
+            #                     OO0O0000OO00O000O.find(_O0OO0O0O00OOO0O00[0]) + len(_O0OO0O0O00OOO0O00[0]):]  # line:130
+            # OO0O0O0O0O000OO0O = OO0O0O0O0O000OO0O[:OO0O0O0O0O000OO0O.find(_O0OO0O0O00OOO0O00[1])]  # line:131
+
             sleep(randint(cfg['DELAY_BETWEEN_ACTIONS'][0], cfg['DELAY_BETWEEN_ACTIONS'][1]))  # line:136
 
             message = bytes(O0O0OOO00O00000OO, 'UTF-8').decode('utf-8')
@@ -138,7 +141,7 @@ def mailing(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, old_urls=[]
                     "User-Agent": O0OOO00OOOO00OOOO},
                 data='-----------------------------221234741415091439122798769189\\r\nContent-Disposition: form-data; name="mailFolders"\r\n\r\n0\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="targetFolder"\r\n\r\n0\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="draftid"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="receiver"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="sender"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="replyId"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="which_message"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="%s"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="message"\r\n\r\n\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="media-gallery-selection"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="video_attachment"; filename=""\r\nContent-Type: application/octet-stream\r\n\r\n\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="__tcAction[send]"\r\n\r\nSend\r\n-----------------------------221234741415091439122798769189--\r\n' % (
                 OO000O0OO0O0O0O0O, OOO0O00O0OOO0O00O, OO000O0OO0O0OO0OO, OOO0OOOOOOO0OO00O, O0000O000O0O0OOO0,
-                O0000O000O0O0OOO0, message, OO0O0O0O0O000OO0O)).text  # line:168
+                O0000O000O0O0OOO0, message, imageId)).text  # line:168
 
             SuccessCount += 1  # line:171
         except Exception as e:
@@ -146,6 +149,32 @@ def mailing(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, old_urls=[]
     sleep(1)  # line:175
     Working = False  # line:176
     SuccessCount = 0  # line:177
+
+
+@eel.expose
+def load_gallery():
+    global s
+    try:
+        UserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.82 Safari/537.36' #TODO get user User-agent
+        galleryResponseJson = s.get('https://www.dream-singles.com/members/gallery.php?__tcAction=loadImages&selectable=1', headers={"User-Agent": UserAgent}).json()
+        galleryHtml = bytes(galleryResponseJson['html'], 'UTF-8').decode('utf-8')
+        galleryHtml = str(galleryHtml.encode(encoding="ascii",errors="ignore"), 'utf-8')
+        galleryHtml = galleryHtml.replace("\n", " ")
+        imageTags = re.findall(r'<img([\w\W]+?)>', galleryHtml)
+        imagesData = []
+        for imageTag in imageTags:
+            dataId = re.findall(r'data-id="(\d+)"', imageTag)
+            src = re.findall(r'src="([^\"]+)"', imageTag)
+            imagesData.append({
+                'dataId': dataId[0],
+                'src': src[0]
+            })
+        return imagesData
+    except Exception as e:
+        logging(traceback.format_exc())
+        return False
+    
+    return True
 
 
 @eel.expose  # line:180
@@ -348,13 +377,13 @@ def closeTab(username):
 
 
 @eel.expose  # line:288
-def start_mailing(O00OO000O0O00O00O, O00O0OO000000OOOO, O000OO00O00OOO000):  # line:289
+def start_mailing(O00OO000O0O00O00O, O00O0OO000000OOOO, O000OO00O00OOO000, imageId):  # line:289
     global Working, SuccessCount, Progress  # line:290
     try:  # line:291
         Working = True  # line:292
         SuccessCount = 0  # line:293
         Thread(target=mailing,
-               args=(O00OO000O0O00O00O, O00O0OO000000OOOO, O000OO00O00OOO000, Progress['urls'])).start()  # line:294
+               args=(O00OO000O0O00O00O, O00O0OO000000OOOO, O000OO00O00OOO000, imageId, Progress['urls'])).start()  # line:294
         Progress['urls'] = O00OO000O0O00O00O  # line:295
         return True  # line:296
     except Exception as e:  # line:297
