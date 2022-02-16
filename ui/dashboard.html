@@ -121,6 +121,43 @@
 </div>
 
 <!-- Login Modal -->
-<div class="login-modal" id="login-modal" style="display:none;">
-	<img src="img/loader.gif" width="30" height="30"/>
+<div class="background-modal" id="login-modal" style="display:none;">
+	<img class="modal-loader" src="img/loader.gif" width="30" height="30"/>
+</div>
+
+<!-- Gallery trigger modal -->
+<button type="button" class="btn btn-primary" onclick="openGallery();">Выбрать картинку</button>
+  
+<!-- Gallery Modal -->
+<div class="modal fade" id="galleryModal" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Галерея анкеты</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeGallery();">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="gallery-items">
+					<div class="gallery-item-wrapper">
+						<img src="https://via.placeholder.com/200" />
+					</div>
+					<div class="gallery-item-wrapper">
+						<img src="https://via.placeholder.com/200"/>
+					</div>
+					<div class="gallery-item-wrapper">
+						<img src="https://via.placeholder.com/200" />
+					</div>
+					<div class="gallery-item-wrapper">
+						<img src="https://via.placeholder.com/200" />
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeGallery();">Закрыть</button>
+				<button type="button" class="btn btn-success" onclick="saveImage();">Выбрать картинку</button>
+			</div>
+		</div>
+	</div>
 </div>

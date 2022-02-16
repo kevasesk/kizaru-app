@@ -345,7 +345,7 @@ button.close:hover {
 	border: black;
 }
 
-.login-modal{
+.background-modal{
 	background-color: black;
 	opacity: 0.5;
 	position: fixed;
@@ -355,10 +355,32 @@ button.close:hover {
 	width: 100%; /* Full width */
 	height: 100%; /* Full height */
 }
-.login-modal img{
+.background-modal .modal-loader{
 	position: absolute;
     top: 50%;
     left: 50%;
     margin-top: -50px;
     margin-left: -50px;
+}
+
+/* Gallery */
+#galleryModal .modal-dialog {
+	width: 1000px;
+	max-width: 1000px;
+}
+#galleryModal .gallery-items{
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-gap: 1em;
+	justify-items: center;
+}
+#galleryModal .gallery-items .gallery-item-wrapper{
+	width:230px;
+}
+#galleryModal .gallery-items .gallery-item-wrapper.active{
+	background-color: #559139;
+}
+
+#galleryModal .gallery-items .gallery-item-wrapper img{
+	padding: 15px;
 }
