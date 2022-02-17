@@ -38,10 +38,12 @@ def auth_file(obj=None):  # line:26
 Working = False  # line:42
 SuccessCount = 0  # line:43
 Progress = {'urls': [], 'stop_on': -1}  # line:44
+Errors = []
 
-def mailing_dump(links, text, UserAgent, old_urls=[]):  # links, text, UserAgent
-    global Working, SuccessCount, Progress, s  # line:48
-    for OO00O000OO0O000OO, O0O00O0O0OOOO00OO in enumerate(links):  # line:49
+def mailing_dump(links, text, UserAgent, imageId, old_urls=[]):  # links, text, UserAgent
+    global Working, SuccessCount, Progress, Errors,  s  # line:48
+    Errors = []
+    for OO00O000OO0O000OO, link in enumerate(links):  # line:49
         if not Working:  # line:50
             break  # line:51
         if old_urls == links and OO00O000OO0O000OO < Progress['stop_on'] + 1:  # line:52
@@ -52,17 +54,25 @@ def mailing_dump(links, text, UserAgent, old_urls=[]):  # links, text, UserAgent
             logging('links' + ' '.join(links))
             logging('text:' + text)
             logging('UserAgent:' + UserAgent)
+            logging('imageId:' + imageId)
+            if link == '2' or link == '4':
+                raise Exception('Something going wrong with link')
+
+            logging('link:' + link)
             logging('---------')
             SuccessCount += 1  # line:171
         except Exception as e:
+            Errors.append(link)
             logging(traceback.format_exc())
+            continue
     sleep(1)  # line:175
     Working = False  # line:176
     SuccessCount = 0  # line:177
 
 
 def mailing(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, imageId, old_urls=[]):  # line:47
-    global Working, SuccessCount, Progress, s  # line:48
+    global Working, SuccessCount, Progress, Errors, s  # line:48
+    Errors = []
     for OO00O000OO0O000OO, O0O00O0O0OOOO00OO in enumerate(OOO00OOOO0O0OOOOO):  # line:49
         if not Working:  # line:50
             break  # line:51
@@ -145,18 +155,22 @@ def mailing(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, imageId, ol
 
             SuccessCount += 1  # line:171
         except Exception as e:
+            Errors.append(link)
             logging(traceback.format_exc())
     sleep(1)  # line:175
     Working = False  # line:176
     SuccessCount = 0  # line:177
 
+@eel.expose
+def get_errors_list():
+    return Errors
+
 
 @eel.expose
-def load_gallery():
+def load_gallery(ua):
     global s
     try:
-        UserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.82 Safari/537.36' #TODO get user User-agent
-        galleryResponseJson = s.get('https://www.dream-singles.com/members/gallery.php?__tcAction=loadImages&selectable=1', headers={"User-Agent": UserAgent}).json()
+        galleryResponseJson = s.get('https://www.dream-singles.com/members/gallery.php?__tcAction=loadImages&selectable=1', headers={"User-Agent": ua}).json()
         galleryHtml = bytes(galleryResponseJson['html'], 'UTF-8').decode('utf-8')
         galleryHtml = str(galleryHtml.encode(encoding="ascii",errors="ignore"), 'utf-8')
         galleryHtml = galleryHtml.replace("\n", " ")
@@ -438,4 +452,4 @@ def get_user_agent(username):  # line:324
 
 
 eel.init('ui')  # line:332
-eel.start('index.html', size=(1250, 750))
+eel.start('index.html', size=(1250, 850))

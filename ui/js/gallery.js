@@ -1,8 +1,9 @@
 var openGallery = async function(targetId){
     $('#galleryModal').modal('show');
     $('#galleryModal').data('target', targetId);
+    ua = $('#'+targetId+' [data-role="ua"]').val()
     $('#galleryModal .gallery-items').empty();
-    let images = await eel.load_gallery()()
+    let images = await eel.load_gallery(ua)()
     if(Array.isArray(images) && images.length > 0){
         for(var i=0; i < images.length; i++){
             var galleryImageTemplate = $('#galleryImageTemplate').html();

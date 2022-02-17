@@ -233,6 +233,15 @@ async function start(targetId) {
 					clearInterval(interval)
 					stop(true)
 					$.toast('Рассылка завершена', 'success')
+					let errorLinks = await eel.get_errors_list()()
+					if(errorLinks && errorLinks.length > 0){
+						$('#errorsModal').modal('show');
+						var text = '';
+						for(var i = 0; i < errorLinks.length; i++){
+							text += errorLinks[i] + '\n';
+						}
+						$('#errorLinks').val(text);
+					}
 				}
 				oldSuccessCount = successCount
 				updateProgressBar(successCount, links.length)
@@ -247,6 +256,10 @@ async function start(targetId) {
 			return false
 		}
 	}
+}
+
+function closeErrorsModal(){
+	$('#errorsModal').modal('hide');
 }
 
 async function stop(frontendOnly=false) {
