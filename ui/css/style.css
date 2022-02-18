@@ -392,3 +392,9 @@ button.close:hover {
 #galleryModal .gallery-items .gallery-item-wrapper img{
 	padding: 15px;
 }
+
+/* Errors */
+#errorsModal .modal-dialog {
+	max-width: 800px;
+	width: 800px;
+}
