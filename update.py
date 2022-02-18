@@ -9,6 +9,7 @@ files = [
     'ui/dashboard.html',
     'ui/login.html',
     'ui/js/functions.js',
+    'ui/js/gallery.js',
     'ui/css/style.css'
 ]
 
