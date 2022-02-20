@@ -2,7 +2,7 @@ from traceback import print_exc  # line:2
 from threading import Thread  # line:3
 from random import randint  # line:4
 from time import sleep  # line:5
-from datetime import date
+from datetime import datetime
 import pickle  # line:6
 import json  # line:7
 import os  # line:8
@@ -197,7 +197,7 @@ def get_login_details():  # line:181
     
 def logging(message):
     f = open("debug.log", "a")
-    today = date.today()
+    today = datetime.now()
     f.write('\n' + today.strftime("%b-%d-%Y-%T") + ' - ' + str(message))
     f.close()
 
