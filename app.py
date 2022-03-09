@@ -263,7 +263,6 @@ def logout():  # line:186
 
 @eel.expose  # line:194
 def login(O0O0OOO00OOO00OOO, OOOOOO0O0O000O0OO, save_login_details=False):  # line:195
-    return True
     global s  # line:196
     s = requests.Session()  # line:197
     try:  # line:198
