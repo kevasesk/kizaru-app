@@ -263,6 +263,7 @@ def logout():  # line:186
 
 @eel.expose  # line:194
 def login(O0O0OOO00OOO00OOO, OOOOOO0O0O000O0OO, save_login_details=False):  # line:195
+    return True
     global s  # line:196
     s = requests.Session()  # line:197
     try:  # line:198
@@ -329,17 +330,18 @@ def login_on_site(O00OO0O0OOOO0OOO0, O000O000O00O0000O, OO0OO00OO000O0O00):  # l
     global s  # line:214
     s = requests.Session()  # line:215
     try:  # line:216
-        O00O0O0O000O00OOO = s.get('https://www.dream-singles.com/dating-login.php', headers={
+        O00O0O0O000O00OOO = formated(s.get('https://www.dream-singles.com/dating-login.php', headers={
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
             "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
             "Connection": "keep-alive", "DNT": "1", "Host": "www.dream-singles.com", "Sec-Fetch-Dest": "document",
             "Sec-Fetch-Mode": "navigate", "Sec-Fetch-Site": "none", "Sec-Fetch-User": "?1",
-            "Upgrade-Insecure-Requests": "1", "User-Agent": OO0OO00OO000O0O00, }).text  # line:234
+            "Upgrade-Insecure-Requests": "1", "User-Agent": OO0OO00OO000O0O00, }).text)  # line:234
+        
         O000O00O000OOOO00 = ('<input type="hidden" name="token" value="', '"')  # line:237
         O0O0O0O00O0O0OOO0 = O00O0O0O000O00OOO[
                             O00O0O0O000O00OOO.find(O000O00O000OOOO00[0]) + len(O000O00O000OOOO00[0]):]  # line:238
         O0O0O0O00O0O0OOO0 = O0O0O0O00O0O0OOO0[:O0O0O0O00O0O0OOO0.find(O000O00O000OOOO00[1])]  # line:239
-        requestResult = s.post('https://www.dream-singles.com/dating-login.php?loc=', headers={
+        requestResult = s.post('https://www.dream-singles.com/login_check', headers={
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
             "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
             "Connection": "keep-alive", "Content-Type": "application/x-www-form-urlencoded", "DNT": "1",
@@ -347,15 +349,17 @@ def login_on_site(O00OO0O0OOOO0OOO0, O000O000O00O0000O, OO0OO00OO000O0O00):  # l
             "Referer": "https://www.dream-singles.com/dating-login.php", "Sec-Fetch-Dest": "document",
             "Sec-Fetch-Mode": "navigate", "Sec-Fetch-Site": "same-origin", "Sec-Fetch-User": "?1",
             "Upgrade-Insecure-Requests": "1", "User-Agent": OO0OO00OO000O0O00, },
-                                   data={'token': O0O0O0O00O0O0OOO0, 'login': O00OO0O0OOOO0OOO0,
-                                         'password': O000O000O00O0000O, '__tcAction': 'loginMember',
+                                   data={'_token': O0O0O0O00O0O0OOO0, '_username': O00OO0O0OOOO0OOO0,
+                                         '_password': O000O000O00O0000O, '__tcAction': 'loginMember',
                                          'submit': ''})  # line:268
-        O00O0O0O000O00OOO = requestResult.text
+        O00O0O0O000O00OOO = formated(requestResult.text)
+
         OO000O000O0OO0O00 = (
         '<a href="#" class="dropdown-toggle photo" data-toggle="dropdown"><img src="', '"')  # line:271
         OOO0O00000OOO00OO = O00O0O0O000O00OOO[
                             O00O0O0O000O00OOO.find(OO000O000O0OO0O00[0]) + len(OO000O000O0OO0O00[0]):]  # line:272
         OOO0O00000OOO00OO = OOO0O00000OOO00OO[:OOO0O00000OOO00OO.find(OO000O000O0OO0O00[1])]  # line:273
+
         if OOO0O00000OOO00OO.startswith('https://'):
             addAccount(O00OO0O0OOOO0OOO0, O000O000O00O0000O, OO0OO00OO000O0O00, OOO0O00000OOO00OO)
             return OOO0O00000OOO00OO  # line:275
@@ -365,6 +369,11 @@ def login_on_site(O00OO0O0OOOO0OOO0, O000O000O00O0000O, OO0OO00OO000O0O00):  # l
         logging(traceback.format_exc())
         return None  # line:278
 
+
+def formated(text):
+    formatted = bytes(text, 'UTF-8').decode('utf-8')
+    formatted = str(formatted.encode(encoding="ascii",errors="ignore"), 'utf-8')
+    return formatted
 
 @eel.expose  # line:281
 def logout_on_site():  # line:282
