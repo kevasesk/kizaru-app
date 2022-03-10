@@ -11,15 +11,18 @@ import eel  # line:12
 import traceback  # line:13
 import re
 
-auth_file_path = 'auth'  # line:14
-os.system('cd "%s"' % os.path.dirname(os.path.abspath(__file__)))  # line:17
-cfg = {
-	"DELAY_BETWEEN_URLS": [1, 3],
-	"DELAY_BETWEEN_ACTIONS": [3, 6]
-}
-#with open('config.json', 'r', encoding='utf8') as f:  # line:19
-#    cfg = json.loads(f.read())  # line:20
-s = requests.Session()  # line:23
+try:
+    auth_file_path = 'auth'  # line:14
+    os.system('cd "%s"' % os.path.dirname(os.path.abspath(__file__)))  # line:17
+    cfg = {
+        "DELAY_BETWEEN_URLS": [1, 3],
+        "DELAY_BETWEEN_ACTIONS": [3, 6]
+    }
+    #with open('config.json', 'r', encoding='utf8') as f:  # line:19
+    #    cfg = json.loads(f.read())  # line:20
+    s = requests.Session()  # line:23
+except Exception as e:
+    logging(traceback.format_exc())
 
 
 def auth_file(obj=None):  # line:26
@@ -458,6 +461,8 @@ def get_user_agent(username):  # line:324
 
     return None
 
-
-eel.init('ui')  # line:332
-eel.start('index.html', size=(1250, 850))
+try:
+    eel.init('ui')  # line:332
+    eel.start('index.html', size=(1250, 850))
+except Exception as e:
+    logging(traceback.format_exc())
