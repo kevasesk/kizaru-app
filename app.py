@@ -141,7 +141,6 @@ def mailing(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, imageId, ol
 
             message = bytes(O0O0OOO00O00000OO, 'UTF-8').decode('utf-8')
             message = str(message.encode(encoding="ascii",errors="ignore"), 'utf-8')
-
             OO0O0000OO00O000O = s.post(
                 'https://www.dream-singles.com/messaging/write.php?replyId=%s&receiver=%s&mode=inbox&page=1&q=%s' % (
                 OOO0OOOOOOO0OO00O, OOO0O00O0OOO0O00O, OOOO000O0O0O0O0O0), headers={
