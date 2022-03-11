@@ -86,7 +86,8 @@ def mailing(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, imageId, ol
             if 'https://www.dream-singles.com/messaging/write.php?replyId=' not in O0O00O0O0OOOO00OO:  # line:56
                 SuccessCount += 1  # line:57
                 continue  # line:58
-            sleep(randint(cfg['DELAY_BETWEEN_URLS'][0], cfg['DELAY_BETWEEN_URLS'][1]))  # line:66
+            #sleep(randint(cfg['DELAY_BETWEEN_URLS'][0], cfg['DELAY_BETWEEN_URLS'][1]))  # line:66
+            sleep(1)
             OO0O0000OO00O000O = s.get(O0O00O0O0OOOO00OO, headers={
                 "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
                 "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
@@ -136,7 +137,7 @@ def mailing(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, imageId, ol
             #                     OO0O0000OO00O000O.find(_O0OO0O0O00OOO0O00[0]) + len(_O0OO0O0O00OOO0O00[0]):]  # line:130
             # OO0O0O0O0O000OO0O = OO0O0O0O0O000OO0O[:OO0O0O0O0O000OO0O.find(_O0OO0O0O00OOO0O00[1])]  # line:131
 
-            sleep(randint(cfg['DELAY_BETWEEN_ACTIONS'][0], cfg['DELAY_BETWEEN_ACTIONS'][1]))  # line:136
+            #sleep(randint(cfg['DELAY_BETWEEN_ACTIONS'][0], cfg['DELAY_BETWEEN_ACTIONS'][1]))  # line:136
 
             message = bytes(O0O0OOO00O00000OO, 'UTF-8').decode('utf-8')
             message = str(message.encode(encoding="ascii",errors="ignore"), 'utf-8')
