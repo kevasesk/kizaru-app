@@ -91,7 +91,7 @@ async function loginOnSite(targetId = null, parentId = null, onlySwitch = false)
 			}
 			$('#login-modal').show();
 			$('#'+targetId+' [data-role="profile-login-btn"]').attr('disabled', true)
-			let result = await eel.login_on_site(username, password, ua)()
+			let result = await eel.login_on_site(targetId, username, password, ua)()
 			if (result != null) {
 				authorized = true
 				$('#'+targetId+' [data-role="profile-pic"]').attr('src', result)
@@ -206,15 +206,15 @@ async function initAccounts(){
 	}
 }
 
-function updateProgressBar(now, max) {
-	$('.progress-text').html(now + ' из ' + max)
-	$('#progress').css('width', (now/max*100) + '%')
+function updateProgressBar(targetId, now, max) {
+	$('#'+targetId+' .progress-text').html(now + ' из ' + max)
+	$('#'+targetId+' [data-role="progress"]').css('width', (now/max*100) + '%')
 }
 
 async function start(targetId) {
 	if (working) {
 		// просто открыть модальное окно
-		$('#progressModal').modal('show')
+		$('#'+targetId).find('[data-role="progressModal"]').eq(0).modal('show')
 
 	} else {
 		// запустить рассылку
@@ -222,33 +222,33 @@ async function start(targetId) {
 		text = $('#'+targetId+' [data-role="mail-text"]').val()
 		ua = $('#'+targetId+' [data-role="ua"]').val()
 		imageId = $('#'+targetId+' [data-role="gallery-image-data-id"]').val()
-		updateProgressBar(0, links.length)
+		updateProgressBar(targetId, 0, links.length)
 		if (links.length != 0 && text != '' && ua != '' && authorized && imageId !='') {
 			working = true
-			$('#progressModal').modal('show')
+			$('#'+targetId).find('[data-role="progressModal"]').eq(0).modal('show')
 			interval = setInterval(async function(){
-				successCount = await getSuccessCount()
+				successCount = await getSuccessCount(targetId)
 				// закругляемся
 				if (!working || (oldSuccessCount != 0 && successCount == 0)) {
 					clearInterval(interval)
-					stop(true)
+					stop(targetId, true)
 					$.toast('Рассылка завершена', 'success')
-					let errorLinks = await eel.get_errors_list()()
+					let errorLinks = await eel.get_errors_list()(targetId)
 					if(errorLinks && errorLinks.length > 0){
-						$('#errorsModal').modal('show');
+						$('#errorsModal').modal('show');//TODO
 						var text = '';
 						for(var i = 0; i < errorLinks.length; i++){
 							text += errorLinks[i] + '\n';
 						}
-						$('#errorLinks').val(text);
+						$('#errorLinks').val(text);//TODO
 					}
 				}
 				oldSuccessCount = successCount
-				updateProgressBar(successCount, links.length)
+				updateProgressBar(targetId, successCount, links.length)
 			}, 1000)
 			$('#'+targetId+' [data-role="start-btn"]').html('Работаем...')
-			$('#progressModal').data('target-id', targetId);
-			let result = await eel.start_mailing(links, text, ua, imageId)()
+			$('#'+targetId).find('[data-role="progressModal"]').eq(0).data('target-id', targetId);
+			let result = await eel.start_mailing(targetId, links, text, ua, imageId)()
 			return true
 		}
 		else {
@@ -261,13 +261,15 @@ async function start(targetId) {
 function closeErrorsModal(){
 	$('#errorsModal').modal('hide');
 }
+function closeProgressModal(targetId){
+	$('#'+targetId).find('[data-role="progressModal"]').eq(0).modal('hide');
+}
 
-async function stop(frontendOnly=false) {
+async function stop(targetId, frontendOnly=false) {
 	if (working) {
 		working = false
-		$('#progressModal').modal('hide')
-		updateProgressBar(0, 0)
-		var targetId = $('#progressModal').data('target-id');
+		$('#'+targetId).find('[data-role="progressModal"]').eq(0).modal('hide')
+		updateProgressBar(targetId, 0, 0)
 		$('#'+targetId+' [data-role="start-btn"]').html('Начать работу')
 		if (!frontendOnly) {
 			let result = await eel.stop_mailing()()
@@ -280,9 +282,9 @@ async function stop(frontendOnly=false) {
 	}
 }
 
-async function getSuccessCount() {
+async function getSuccessCount(targetId) {
 	if (working) {
-		let result = await eel.get_success_count()()
+		let result = await eel.get_success_count()(targetId)
 		return parseInt(result)
 	}
 	else {

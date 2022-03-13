@@ -99,33 +99,37 @@
 						<button data-role="start-btn" type="button" class="btn btn-block btn-dark start-btn" onclick="start('${id}')">Начать работу</button>
 					</div>
 				</div>
+
+				<!-- Modal -->
+				<div class="modal fade" data-role="progressModal" tabindex="-1" role="dialog" aria-labelledby="exampleModal3Label" aria-hidden="true">
+					<div class="modal-dialog modal-lg" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="exampleModal3Label">Работаем...</h5><br/>
+								<button type="button" class="close" onclick="closeProgressModal('${id}')" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<div class="progress">
+									<p class="progress-text">10 из 20</p>
+									<div data-role="progress" class="progress-bar progress-bar-striped bg-dark progress-bar-animated" role="progressbar" style="width: 0"></div>
+								</div>
+								<br/>
+								<p>Что бы перейди к другой анкете, нажмите вне окна что бы свернуть окно процесса.</p>
+							</div>
+							<div class="modal-footer">
+								<button data-role="stop-btn" type="button" class="btn btn-dark" onclick="stop('${id}')">Остановить</button>
+							</div>
+						</div>
+					</div>
+				</div>
 		</div>
 	</template>
 
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="progressModal" tabindex="-1" role="dialog" aria-labelledby="exampleModal3Label" aria-hidden="true">
-	<div class="modal-dialog modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModal3Label">Работаем...</h5>
-				<button type="button" class="close" onclick="$('#progressModal').modal('hide')" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<div class="progress">
-					<p class="progress-text">10 из 20</p>
-					<div id="progress" class="progress-bar progress-bar-striped bg-dark progress-bar-animated" role="progressbar" style="width: 0"></div>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button id="stop-btn" type="button" class="btn btn-dark" onclick="stop()">Остановить</button>
-			</div>
-		</div>
-	</div>
-</div>
+
 
 <!-- Login Modal -->
 <div class="background-modal" id="login-modal" style="display:none;">

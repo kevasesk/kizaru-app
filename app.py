@@ -14,13 +14,7 @@ import re
 try:
     auth_file_path = 'auth'  # line:14
     os.system('cd "%s"' % os.path.dirname(os.path.abspath(__file__)))  # line:17
-    cfg = {
-        "DELAY_BETWEEN_URLS": [1, 3],
-        "DELAY_BETWEEN_ACTIONS": [3, 6]
-    }
-    #with open('config.json', 'r', encoding='utf8') as f:  # line:19
-    #    cfg = json.loads(f.read())  # line:20
-    s = requests.Session()  # line:23
+    globalSessions = dict()  # line:23
 except Exception as e:
     logging(traceback.format_exc())
 
@@ -43,8 +37,8 @@ SuccessCount = 0  # line:43
 Progress = {'urls': [], 'stop_on': -1}  # line:44
 Errors = []
 
-def mailing_dump(links, text, UserAgent, imageId, old_urls=[]):  # links, text, UserAgent
-    global Working, SuccessCount, Progress, Errors,  s  # line:48
+def mailing(links, text, UserAgent, imageId, old_urls=[]):  # links, text, UserAgent
+    global Working, SuccessCount, Progress, Errors,  globalSessions  # line:48
     Errors = []
     for OO00O000OO0O000OO, link in enumerate(links):  # line:49
         if not Working:  # line:50
@@ -53,11 +47,8 @@ def mailing_dump(links, text, UserAgent, imageId, old_urls=[]):  # links, text, 
             SuccessCount += 1  # line:53
             continue  # line:54
         try:  # line:55
-            sleep(1)  # line:66
+            sleep(5)  # line:66
             logging('links' + ' '.join(links))
-            logging('text:' + text)
-            logging('UserAgent:' + UserAgent)
-            logging('imageId:' + imageId)
             if link == '2' or link == '4':
                 raise Exception('Something going wrong with link')
 
@@ -73,7 +64,7 @@ def mailing_dump(links, text, UserAgent, imageId, old_urls=[]):  # links, text, 
     SuccessCount = 0  # line:177
 
 
-def mailing(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, imageId, old_urls=[]):  # line:47
+def mailing_d(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, imageId, old_urls=[]):  # line:47
     global Working, SuccessCount, Progress, Errors, s  # line:48
     Errors = []
     for OO00O000OO0O000OO, O0O00O0O0OOOO00OO in enumerate(OOO00OOOO0O0OOOOO):  # line:49
@@ -86,7 +77,6 @@ def mailing(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, imageId, ol
             if 'https://www.dream-singles.com/messaging/write.php?replyId=' not in O0O00O0O0OOOO00OO:  # line:56
                 SuccessCount += 1  # line:57
                 continue  # line:58
-            #sleep(randint(cfg['DELAY_BETWEEN_URLS'][0], cfg['DELAY_BETWEEN_URLS'][1]))  # line:66
             sleep(1)
             OO0O0000OO00O000O = s.get(O0O00O0O0OOOO00OO, headers={
                 "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
@@ -121,7 +111,6 @@ def mailing(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, imageId, ol
                                 OO0O0000OO00O000O.find(_O0OO0O0O00OOO0O00[0]) + len(_O0OO0O0O00OOO0O00[0]):]  # line:105
             OOOO000O0O0O0O0O0 = OOOO000O0O0O0O0O0[:OOOO000O0O0O0O0O0.find(_O0OO0O0O00OOO0O00[1])]  # line:106
 
-            # sleep(randint(cfg['DELAY_BETWEEN_ACTIONS'][0], cfg['DELAY_BETWEEN_ACTIONS'][1]))  # line:109
             # OO0O0000OO00O000O = s.get(
             #     'https://www.dream-singles.com/members/gallery.php?__tcAction=loadImages&selectable=1',
             #     headers={"Accept": "*/*", "Accept-Encoding": "gzip, deflate, br",
@@ -136,8 +125,6 @@ def mailing(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, imageId, ol
             # OO0O0O0O0O000OO0O = OO0O0000OO00O000O[
             #                     OO0O0000OO00O000O.find(_O0OO0O0O00OOO0O00[0]) + len(_O0OO0O0O00OOO0O00[0]):]  # line:130
             # OO0O0O0O0O000OO0O = OO0O0O0O0O000OO0O[:OO0O0O0O0O000OO0O.find(_O0OO0O0O00OOO0O00[1])]  # line:131
-
-            #sleep(randint(cfg['DELAY_BETWEEN_ACTIONS'][0], cfg['DELAY_BETWEEN_ACTIONS'][1]))  # line:136
 
             message = bytes(O0O0OOO00O00000OO, 'UTF-8').decode('utf-8')
             message = str(message.encode(encoding="ascii",errors="ignore"), 'utf-8')
@@ -165,15 +152,15 @@ def mailing(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, imageId, ol
     SuccessCount = 0  # line:177
 
 @eel.expose
-def get_errors_list():
+def get_errors_list(targetId):
     return Errors
 
 
 @eel.expose
-def load_gallery(ua):
-    global s
+def load_gallery(targetId, ua):
+    global globalSessions
     try:
-        galleryResponseJson = s.get('https://www.dream-singles.com/members/gallery.php?__tcAction=loadImages&selectable=1', headers={"User-Agent": ua}).json()
+        galleryResponseJson = globalSessions[targetId].get('https://www.dream-singles.com/members/gallery.php?__tcAction=loadImages&selectable=1', headers={"User-Agent": ua}).json()
         galleryHtml = bytes(galleryResponseJson['html'], 'UTF-8').decode('utf-8')
         galleryHtml = str(galleryHtml.encode(encoding="ascii",errors="ignore"), 'utf-8')
         galleryHtml = galleryHtml.replace("\n", " ")
@@ -265,9 +252,7 @@ def logout():  # line:186
 
 
 @eel.expose  # line:194
-def login(O0O0OOO00OOO00OOO, OOOOOO0O0O000O0OO, save_login_details=False):  # line:195
-    global s  # line:196
-    s = requests.Session()  # line:197
+def login(targetId, O0O0OOO00OOO00OOO, OOOOOO0O0O000O0OO, save_login_details=False):  # line:195
     try:  # line:198
         OOOO0O0O000O00OOO = requests.post('http://shalom3228.zzz.com.ua/api/get.php', data={'username': O0O0OOO00OOO00OOO,
                                                                          'password': OOOOOO0O0O000O0OO})  # line:199
@@ -328,11 +313,11 @@ def load_accounts():
 
 
 @eel.expose  # line:212
-def login_on_site(O00OO0O0OOOO0OOO0, O000O000O00O0000O, OO0OO00OO000O0O00):  # line:
-    global s  # line:214
-    s = requests.Session()  # line:215
+def login_on_site(targetId, O00OO0O0OOOO0OOO0, O000O000O00O0000O, OO0OO00OO000O0O00):  # line:
+    global globalSessions  # line:214
+    globalSessions[targetId] = requests.Session()  # line:215
     try:  # line:216
-        O00O0O0O000O00OOO = formated(s.get('https://www.dream-singles.com/dating-login.php', headers={
+        O00O0O0O000O00OOO = formated(globalSessions[targetId].get('https://www.dream-singles.com/dating-login.php', headers={
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
             "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
             "Connection": "keep-alive", "DNT": "1", "Host": "www.dream-singles.com", "Sec-Fetch-Dest": "document",
@@ -378,9 +363,9 @@ def formated(text):
     return formatted
 
 @eel.expose  # line:281
-def logout_on_site():  # line:282
-    global s  # line:283
-    s = requests.Session()  # line:284
+def logout_on_site(targetId):  # line:282
+    global globalSessions  # line:283
+    globalSessions[targetId] = requests.Session()  # line:284
     return True  # line:285
 
 
@@ -402,7 +387,7 @@ def closeTab(username):
 
 
 @eel.expose  # line:288
-def start_mailing(O00OO000O0O00O00O, O00O0OO000000OOOO, O000OO00O00OOO000, imageId):  # line:289
+def start_mailing(targetId, O00OO000O0O00O00O, O00O0OO000000OOOO, O000OO00O00OOO000, imageId):  # line:289
     global Working, SuccessCount, Progress  # line:290
     try:  # line:291
         Working = True  # line:292
@@ -417,7 +402,7 @@ def start_mailing(O00OO000O0O00O00O, O00O0OO000000OOOO, O000OO00O00OOO000, image
 
 
 @eel.expose  # line:302
-def stop_mailing():  # line:303
+def stop_mailing(targetId):  # line:303
     global Working, SuccessCount, Progress  # line:304
     Progress['stop_on'] = SuccessCount - 1  # line:305
     Working = False  # line:306
@@ -426,7 +411,7 @@ def stop_mailing():  # line:303
 
 
 @eel.expose  # line:311
-def get_success_count():  # line:312
+def get_success_count(targetId):  # line:312
     return SuccessCount  # line:313
 
 
