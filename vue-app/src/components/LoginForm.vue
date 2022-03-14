@@ -1,6 +1,6 @@
 <template>
   <div id="login-wrapper">
-	<div class="container" v-if="!showDashboard()">
+	<div class="login-wrapper-container container" v-if="!showDashboard()">
 		<div class="row">
 			<div class="col align-self-center login">
 				<h1 class="gtxt">Добро пожаловать!</h1>
@@ -23,7 +23,7 @@
 			</div>
 		</div>
 	</div>
-	<DashboardForm v-if="showDashboard()" :username="username"/>
+	<DashboardForm v-if="showDashboard()"/>
   </div>
 </template>
 
@@ -49,6 +49,7 @@ export default {
 				let result = await window.eel.login(0, this.username, this.password, this.remember)()
 				if (result) {
 					this.$store.state.isLoggedIn = true;
+					this.$store.state.username = this.username;
 				}
 				else {
 					this.toast('Не удалось войти', 'error')

@@ -1,7 +1,7 @@
 <template>
   <header id="dashboard-header">
     <h5>
-      <span class="" id="a-name">{{ username }}</span>
+      <span class="" id="a-name">{{ getUsername() }}</span>
     </h5>
     <div class="exit-btn">
       <button type="button" class="btn btn-sm btn-dark" @click="logout()">
@@ -14,11 +14,8 @@
 <script>
 export default {
   name: "DashboardHeader",
-  props: ["username"],
   methods: {
     async logout() {
-      console.log("logout trigger");
-
       await window.eel.logout()((result) => {
         if(result){
             this.$store.state.isLoggedIn = false;
@@ -29,6 +26,9 @@ export default {
         
       });
     },
+    getUsername(){
+      return this.$store.state.username;
+    }
   },
 };
 </script>
