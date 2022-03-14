@@ -21,8 +21,7 @@ export default {
 
       await window.eel.logout()((result) => {
         if(result){
-            console.log('loged out!');
-            //todo go to login
+            this.$store.state.isLoggedIn = false;
         }else{
           this.toast('Не удалось выйти', 'error')
           console.log(result);
