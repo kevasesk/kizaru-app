@@ -3,13 +3,8 @@ from threading import Thread  # line:3
 from random import randint  # line:4
 from time import sleep  # line:5
 from datetime import datetime
-import pickle  # line:6
-import json  # line:7
-import os  # line:8
-import requests  # line:11
-import eel  # line:12
-import traceback  # line:13
-import re
+
+import pickle, json, os, requests, eel, traceback, re, sys
 
 try:
     auth_file_path = 'auth'  # line:14
@@ -252,18 +247,17 @@ def logout():  # line:186
 
 
 @eel.expose  # line:194
-def login(targetId, O0O0OOO00OOO00OOO, OOOOOO0O0O000O0OO, save_login_details=False):  # line:195
+def login(targetId, username, password, save_login_details=False):  # line:195
     try:  # line:198
-        OOOO0O0O000O00OOO = requests.post('http://shalom3228.zzz.com.ua/api/get.php', data={'username': O0O0OOO00OOO00OOO,
-                                                                         'password': OOOOOO0O0O000O0OO})  # line:199
-        if OOOO0O0O000O00OOO.json()['success'] is True:  # line:200
+        result = requests.post('http://shalom3228.zzz.com.ua/api/get.php', data={'username': username, 'password': password})  # line:199
+        if result.json()['success'] is True:  # line:200
             if save_login_details is True:  # line:201
                 auth_file(
-                    {'username': O0O0OOO00OOO00OOO, 'password': OOOOOO0O0O000O0OO, 'auto_login': True})  # line:202
+                    {'username': username, 'password': password, 'auto_login': True})  # line:202
             else:  # line:203
                 if os.path.exists(auth_file_path):  # line:204
                     os.remove(auth_file_path)  # line:205
-        return OOOO0O0O000O00OOO.json()['success']  # line:206
+        return result.json()['success']  # line:206
     except Exception as e:  # line:207
         logging(traceback.format_exc())
         return False  # line:209
