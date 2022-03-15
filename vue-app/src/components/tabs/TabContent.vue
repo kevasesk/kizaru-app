@@ -100,8 +100,23 @@ export default {
             }
             
         },
-        setUserAgent(){
-            console.log('setUserAgent');
+        async setUserAgent(){
+            var username = this.username;
+            var ua = this.ua;
+            console.log(this.ua);
+            if (ua != '' && (/(opera|safari|firefox|(?!chrome))\/?\s*(\.?\d+(\.\d+)*)/i).test(ua) && ua.length >= 16) {
+                let result = await window.eel.set_user_agent(ua, username)()
+                if(result){
+                    this.toast('Успешно', 'success');
+                    return true;
+                }else{
+                     this.toast('Что-то пошло не так с сохранением User-Agent', 'error');
+                }
+            }
+            else {
+                this.toast('Пожалуйста, укажите User-Agent вашего браузера', 'warning')
+                return false
+            }
         },
         async saveLinks(){
             var username = this.username;
