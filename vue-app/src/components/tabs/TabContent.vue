@@ -1,14 +1,14 @@
 <template>
-   <div class="tab-pane fade" :id="worksheet.id">
+   <div class="tab-pane fade" :id="id">
         <div class="row align-items-center">
             <div class="col-2">
-                <img data-role="profile-pic" :src="worksheet.image">
+                <img data-role="profile-pic" :src="image">
             </div>
             <div class="col-4">
-                <input type="text" class="custom-input form-control form-control-sm" data-role="profile-username" placeholder="Логин" :value="worksheet.username">
+                <input type="text" class="custom-input form-control form-control-sm" data-role="profile-username" placeholder="Логин" v-model="username">
             </div>
             <div class="col-4">
-                <input type="password" class="custom-input form-control form-control-sm" data-role="profile-password" placeholder="Пароль" :value="worksheet.password">
+                <input type="password" class="custom-input form-control form-control-sm" data-role="profile-password" placeholder="Пароль" v-model="password">
             </div>
             <div class="col-2">
                 <button data-role="profile-login-btn" type="button" class="btn btn-dark float-right" @click="loginOnSite()">Вход</button>
@@ -17,7 +17,7 @@
         <div class="row">
             <div class="col-10">
                 <div class="input-group input-group-sm" id="ua-block">
-                    <input type="text" class="custom-input form-control" placeholder="User-Agent" data-role="ua" aria-describedby="basic-addon1" :value="worksheet.ua">
+                    <input type="text" class="custom-input form-control" placeholder="User-Agent" data-role="ua" aria-describedby="basic-addon1" v-model="ua">
                 </div>
             </div>
             <div class="col-2">
@@ -47,7 +47,7 @@
         <div class="row">
             <div class="col">
                 <input type="hidden" data-role="gallery-image-data-id"/>
-                <img :src="worksheet.image" data-role="gallery-image-src" width="70" height="100"/>
+                <img src="img/userpic.jpg" data-role="gallery-image-src" width="70" height="100"/>
                 <button type="button" class="btn btn-dark" @click="openGallery()">Выбрать картинку</button>
             </div>
         </div>
@@ -63,28 +63,58 @@
 
 <script>
 export default {
-  name: "TabContent",
-  props: ["worksheet"],
-  methods:{
-      loginOnSite(){
-          console.log('login on site');
-      },
-      setUserAgent(){
-          console.log('setUserAgent');
-      },
-      saveLinks(){
+    name: "TabContent",
+    props: ["worksheet"],
+    data() {
+        return {
+            id: this.worksheet.id,
+            username: this.worksheet.username,
+            password: this.worksheet.password,
+            image: this.worksheet.image,
+            ua: this.worksheet.ua,
+        }
+    },
+    methods:{
+        async loginOnSite(){
+            if(this.username == '' || this.password == '' || this.ua == ''){
+                this.toast('Пожалуйста, введите логин, пароль и User-Agent вашего браузера', 'warning')
+            }else{
+                this.$store.state.loadingModalHidden = false;
+                let result = await window.eel.login_on_site(this.id, this.username, this.password, this.ua)()
+                if(result != null){
+                    //this.image = result;
+                    this.$store.commit('updateWorksheet', {
+                        id: this.id,
+                        username: this.username,
+                        password: this.password,
+                        image: result,
+                        ua: this.ua,
+                    })
+                    this.image = this.$store.getters.getWorksheet(this.worksheet.id).image;
+                }else{
+                    this.toast('Не удалось войти', 'error');
+                }
+                this.$store.state.loadingModalHidden = true;
+              
+            }
+            
+        },
+        setUserAgent(){
+            console.log('setUserAgent');
+        },
+        saveLinks(){
 
-      },
-      loadLinks(){
+        },
+        loadLinks(){
 
-      },
-      openGallery(){
+        },
+        openGallery(){
 
-      },
-      start(){
-          
-      }
-  }
+        },
+        start(){
+            
+        }
+    }
 };
 </script>
 

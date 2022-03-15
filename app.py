@@ -262,7 +262,7 @@ def login(targetId, username, password, save_login_details=False):  # line:195
         logging(traceback.format_exc())
         return False  # line:209
 
-def addAccount(username, password, ua, image):
+def addAccount(targetId, username, password, ua, image):
     try:
         accountsFileName = 'accounts.pkl'
         data = {}
@@ -275,6 +275,7 @@ def addAccount(username, password, ua, image):
                 data[username]['username'] = username
                 data[username]['image'] = image
                 data[username]['ua'] = ua
+                data[username]['id'] = targetId
             with open(accountsFileName, 'wb+') as handle:   
                 pickle.dump(data, handle)
         else:  # line:36
@@ -285,6 +286,7 @@ def addAccount(username, password, ua, image):
                 data[username]['username'] = username
                 data[username]['image'] = image
                 data[username]['ua'] = ua
+                data[username]['id'] = targetId
                 pickle.dump(data, handle)
     except Exception as e:
         logging(traceback.format_exc())
@@ -322,7 +324,7 @@ def login_on_site(targetId, O00OO0O0OOOO0OOO0, O000O000O00O0000O, OO0OO00OO000O0
         O0O0O0O00O0O0OOO0 = O00O0O0O000O00OOO[
                             O00O0O0O000O00OOO.find(O000O00O000OOOO00[0]) + len(O000O00O000OOOO00[0]):]  # line:238
         O0O0O0O00O0O0OOO0 = O0O0O0O00O0O0OOO0[:O0O0O0O00O0O0OOO0.find(O000O00O000OOOO00[1])]  # line:239
-        requestResult = s.post('https://www.dream-singles.com/login_check', headers={
+        requestResult = globalSessions[targetId].post('https://www.dream-singles.com/login_check', headers={
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
             "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
             "Connection": "keep-alive", "Content-Type": "application/x-www-form-urlencoded", "DNT": "1",
@@ -342,7 +344,7 @@ def login_on_site(targetId, O00OO0O0OOOO0OOO0, O000O000O00O0000O, OO0OO00OO000O0
         OOO0O00000OOO00OO = OOO0O00000OOO00OO[:OOO0O00000OOO00OO.find(OO000O000O0OO0O00[1])]  # line:273
 
         if OOO0O00000OOO00OO.startswith('https://'):
-            addAccount(O00OO0O0OOOO0OOO0, O000O000O00O0000O, OO0OO00OO000O0O00, OOO0O00000OOO00OO)
+            addAccount(targetId, O00OO0O0OOOO0OOO0, O000O000O00O0000O, OO0OO00OO000O0O00, OOO0O00000OOO00OO)
             return OOO0O00000OOO00OO  # line:275
         else:
             return None
