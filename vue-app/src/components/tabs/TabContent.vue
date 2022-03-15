@@ -35,7 +35,7 @@
         </div>
         <div class="row">
             <div class="col">
-                <textarea class="block" data-role="mail-links"></textarea>
+                <textarea class="block" v-model="links"></textarea>
             </div>
         </div>
         <div class="row">
@@ -72,6 +72,7 @@ export default {
             password: this.worksheet.password,
             image: this.worksheet.image,
             ua: this.worksheet.ua,
+            links: ''
         }
     },
     methods:{
@@ -102,10 +103,47 @@ export default {
         setUserAgent(){
             console.log('setUserAgent');
         },
-        saveLinks(){
+        async saveLinks(){
+            var username = this.username;
+            var links = this.links;
+            if(username && links){
+                var confirmResult = confirm('Вы уверенны что хотите сохранить текущий список ссылок? Сохранённый будет перезаписан.');
+                if(confirmResult){
+                    links = links.split('\n');
+                    let result = await window.eel.save_links(username, links)()
+                    if(result === true){
+                        this.toast('Ссылки сохранены', 'success')
+                    }else{
+                        this.toast('Что-то пошло не так при сохранении ссылок.', 'error')
+                    }
+                }
+            }else{
+                this.toast('Вам нужно сначало залогинится в анкету и ввести ссылки', 'warning')
+            }
+            return true;
 
         },
-        loadLinks(){
+        async loadLinks(){
+            var username = this.username;
+            if(username){
+                var confirmResult = confirm('Вы уверенны что хотите загрузить сохраненный список ссылок? Текущий будет утерян.');
+                if(confirmResult){
+                    let result = await window.eel.load_links(username)()
+                    if(Array.isArray(result)){
+                        var links = '';
+                        for(var i=0;i< result.length ;i++){
+                            links += result[i] + '\n';
+                        }
+                        this.links = links 
+                        this.toast('Ссылки загруженны', 'success')
+                    }else{
+                        this.toast('Что-то пошло не так загрузке ссылок.', 'error')
+                    }
+                }
+            }else{
+                this.toast('Вам нужно сначало залогинится в анкету', 'warning')
+            }
+            return true;
 
         },
         openGallery(){
