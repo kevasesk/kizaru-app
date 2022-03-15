@@ -47,7 +47,7 @@
         <div class="row">
             <div class="col">
                 <input type="hidden" data-role="gallery-image-data-id"/>
-                <img src="img/userpic.jpg" data-role="gallery-image-src" width="70" height="100"/>
+                <img :src="this.$store.state.galleryActiveImageSrc[this.worksheet.id] ?? 'img/userpic.jpg' " data-role="gallery-image-src" width="70" height="100"/>
                 <button type="button" class="btn btn-dark" @click="openGallery()">Выбрать картинку</button>
             </div>
         </div>
@@ -56,12 +56,11 @@
                 <button data-role="start-btn" type="button" class="btn btn-block btn-dark start-btn" @click="start()">Начать работу</button>
             </div>
         </div>
-    <!-- Modal -->
-
     </div>
 </template>
 
 <script>
+
 export default {
     name: "TabContent",
     props: ["worksheet"],
@@ -72,7 +71,7 @@ export default {
             password: this.worksheet.password,
             image: this.worksheet.image,
             ua: this.worksheet.ua,
-            links: ''
+            links: '',
         }
     },
     methods:{
@@ -161,10 +160,25 @@ export default {
             return true;
 
         },
-        openGallery(){
-
+        async openGallery(){
+            var ua = this.worksheet.ua;
+            var id = this.worksheet.id;
+            var username = this.worksheet.username;
+            var password = this.worksheet.password;
+            window.jQuery('#galleryModal').modal('show');
+            this.$store.state.currentGalleryWorksheetId = id;
+            this.$store.state.galleryImages = [];
+            let images = await window.eel.load_gallery(id, username, password, ua)()
+            if(Array.isArray(images) && images.length > 0){
+                for (var image in images) {
+                    this.$store.commit('addGalleryImage', images[image]);
+                }
+            }else{
+                this.toast('Что-то пошло не так при загрузке галереи.', 'error')
+            }
         },
         start(){
+            // gallery dataid - this.$store.state.galleryActiveImageId[this.$store.state.currentGalleryWorksheetId]
             
         }
     }

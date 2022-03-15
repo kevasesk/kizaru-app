@@ -20,6 +20,7 @@
       </div>
     </div>
     <LoadingModal/>
+    <GalleryModal/>
   </div>
 </template>
 
@@ -28,6 +29,7 @@ import NewItem from "./NewItem.vue";
 import TabItem from "./TabItem.vue";
 import TabContent from "./TabContent.vue";
 import LoadingModal from "../modals/LoadingModal.vue";
+import GalleryModal from "../modals/GalleryModal.vue";
 // import TabProgress from "./TabProgress.vue";
 
 export default {
@@ -37,6 +39,7 @@ export default {
     TabItem,
     TabContent,
     LoadingModal,
+    GalleryModal
     // TabProgress
   },
   methods: {

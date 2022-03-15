@@ -5,9 +5,19 @@ const store = createStore({
         isLoggedIn: false,
         username: '',
         worksheets: [],
-        loadingModalHidden: true
+        galleryImages: [],
+
+        loadingModalHidden: true,
+        galleryModalHidden: true,
+
+        galleryActiveImageId: [],
+        galleryActiveImageSrc: [],
+        currentGalleryWorksheetId: null
     },
     mutations: {
+        addGalleryImage (state, image) {
+            state.galleryImages.push(image);
+        },
         addWorksheet (state, worksheet) {
             state.worksheets.push(worksheet);
         },

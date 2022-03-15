@@ -46,7 +46,7 @@ export default {
     methods:{
         async login(){
 			if (this.username != '' && this.password != '') {
-				let result = await window.eel.login(0, this.username, this.password, this.remember)()
+				let result = await window.eel.login(this.username, this.password, this.remember)()
 				if (result) {
 					this.$store.state.isLoggedIn = true;
 					this.$store.state.username = this.username;

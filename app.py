@@ -152,7 +152,7 @@ def get_errors_list(targetId):
 
 
 @eel.expose
-def load_gallery(targetId, ua):
+def load_gallery(targetId, username, password, ua):
     global globalSessions
     try:
         galleryResponseJson = globalSessions[targetId].get('https://www.dream-singles.com/members/gallery.php?__tcAction=loadImages&selectable=1', headers={"User-Agent": ua}).json()
@@ -166,7 +166,7 @@ def load_gallery(targetId, ua):
             src = re.findall(r'src="([^\"]+)"', imageTag)
             imagesData.append({
                 'dataId': dataId[0],
-                'src': src[0]
+                'src': src[0].replace("&amp;", "&")
             })
         return imagesData
     except Exception as e:
@@ -247,7 +247,7 @@ def logout():  # line:186
 
 
 @eel.expose  # line:194
-def login(targetId, username, password, save_login_details=False):  # line:195
+def login(username, password, save_login_details=False):  # line:195
     try:  # line:198
         result = requests.post('http://shalom3228.zzz.com.ua/api/get.php', data={'username': username, 'password': password})  # line:199
         if result.json()['success'] is True:  # line:200
@@ -300,6 +300,8 @@ def load_accounts():
         if os.path.exists(accountsFileName) and os.path.getsize(accountsFileName) > 0: 
             with open(accountsFileName, 'rb') as handle:
                 data = pickle.load(handle)
+                for userKey in data:
+                    login_on_site(data[userKey]['id'], data[userKey]['username'], data[userKey]['password'], data[userKey]['ua'])
                 return data
 
     except Exception as e:
@@ -359,10 +361,10 @@ def formated(text):
     return formatted
 
 @eel.expose  # line:281
-def logout_on_site(targetId):  # line:282
-    global globalSessions  # line:283
-    globalSessions[targetId] = requests.Session()  # line:284
-    return True  # line:285
+def logout_on_site(targetId):
+    global globalSessions
+    globalSessions[targetId] = requests.Session()
+    return True
 
 
 @eel.expose  # line:281
