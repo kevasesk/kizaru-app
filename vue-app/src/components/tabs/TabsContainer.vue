@@ -1,6 +1,5 @@
 <template>
   <div id="dashboard-wrapper">
-    {{getWorksheets()}}
     <div class="container">
       <div class="row">
         <div class="col">
@@ -19,7 +18,6 @@
         </template>
       </div>
     </div>
-    <LoadingModal/>
     <GalleryModal/>
   </div>
 </template>
@@ -28,7 +26,7 @@
 import NewItem from "./NewItem.vue";
 import TabItem from "./TabItem.vue";
 import TabContent from "./TabContent.vue";
-import LoadingModal from "../modals/LoadingModal.vue";
+// import LoadingModal from "../modals/LoadingModal.vue";
 import GalleryModal from "../modals/GalleryModal.vue";
 // import TabProgress from "./TabProgress.vue";
 
@@ -38,16 +36,19 @@ export default {
     NewItem,
     TabItem,
     TabContent,
-    LoadingModal,
+    // LoadingModal,
     GalleryModal
     // TabProgress
   },
   methods: {
     async initWorksheets(){
+        this.$store.state.loadingModalHidden = false;
         let accounts = await window.eel.load_accounts()();
+        this.$store.commit('clearWorksheets');
         for (var account in accounts) {
           this.$store.commit('addWorksheet', accounts[account]);
         }
+        this.$store.state.loadingModalHidden = true;
     },
     getWorksheets() {
       return this.$store.state.worksheets;

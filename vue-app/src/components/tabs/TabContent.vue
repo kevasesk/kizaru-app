@@ -67,7 +67,7 @@ export default {
     data() {
         return {
             id: this.worksheet.id,
-            username: this.worksheet.username,
+            username: this.worksheet.username == 'Новый профиль' ? '' : this.worksheet.username,
             password: this.worksheet.password,
             image: this.worksheet.image,
             ua: this.worksheet.ua,
@@ -177,8 +177,19 @@ export default {
                 this.toast('Что-то пошло не так при загрузке галереи.', 'error')
             }
         },
-        start(){
+        async start(){
             // gallery dataid - this.$store.state.galleryActiveImageId[this.$store.state.currentGalleryWorksheetId]
+            
+            var messages = [];
+            for(var i=0;i<10;i++){
+                messages.push(this.worksheet.username + ' message ' + i);
+            }
+            
+            var result = await window.eel.test_message({
+                username: this.worksheet.username,
+                messages: messages
+            })()
+            console.log('test', result);
             
         }
     }

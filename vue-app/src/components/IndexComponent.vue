@@ -1,16 +1,19 @@
 <template>
   <div>
     <LoginForm v-if="showLoginForm" :loginData="loginData" />
+    <LoadingModal/>
   </div>
 </template>
 
 <script>
 import LoginForm from "./LoginForm.vue";
+import LoadingModal from "./modals/LoadingModal.vue";
 
 export default {
   name: "IndexComponent",
   components: {
     LoginForm,
+    LoadingModal
   },
   data() {
     return {

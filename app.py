@@ -31,6 +31,34 @@ Working = False  # line:42
 SuccessCount = 0  # line:43
 Progress = {'urls': [], 'stop_on': -1}  # line:44
 Errors = []
+TestMessages = dict()
+
+class RepeatThread(Thread):
+    def __init__(self):
+        Thread.__init__(self)
+        self.daemon = True
+        self.start()
+    def run(self):
+        while True:
+            sleep(1)
+            try:
+                for userKey in TestMessages:
+                    if len(TestMessages[userKey]):
+                        logging(TestMessages[userKey][0])
+                        TestMessages[userKey].pop(0)
+                        sleep(1)
+            except:
+                logging(traceback.format_exc())#TODO improve erro logging
+                sleep(1)
+
+
+GlobalThreadTimer = RepeatThread()
+
+
+@eel.expose
+def test_message(data):
+    TestMessages[data['username']] = data['messages']
+
 
 def mailing(links, text, UserAgent, imageId, old_urls=[]):  # links, text, UserAgent
     global Working, SuccessCount, Progress, Errors,  globalSessions  # line:48
@@ -290,7 +318,6 @@ def addAccount(targetId, username, password, ua, image):
                 pickle.dump(data, handle)
     except Exception as e:
         logging(traceback.format_exc())
-
 
 @eel.expose
 def load_accounts():

@@ -1,16 +1,18 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import Toast from './mixins/toast'
 import store from './store'
+
+import Toast from './mixins/toast'
+import Timeout from './mixins/timeout'
 
 // import TabNewItem from "./components/dashboard/tabs/TabNewItem.vue";
 
 const app = createApp(App)
 
 app.mixin(Toast)
-app.use(store)
+app.mixin(Timeout)
 
-// app.component('TabNewItem', TabNewItem);
+app.use(store)
 
 app.mount('#vue-app')
 

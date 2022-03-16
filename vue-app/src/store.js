@@ -15,6 +15,9 @@ const store = createStore({
         currentGalleryWorksheetId: null
     },
     mutations: {
+        clearWorksheets(state){
+            state.worksheets = [];
+        },
         addGalleryImage (state, image) {
             state.galleryImages.push(image);
         },
