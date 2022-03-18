@@ -14,7 +14,6 @@
       <div class="tab-content" id="tabContent">
         <template v-for="worksheet in getWorksheets()" :key="worksheet.id" >
             <TabContent :worksheet="worksheet" />
-            <!-- <TabProgress :worksheet="worksheet" /> -->
         </template>
       </div>
     </div>
@@ -26,9 +25,7 @@
 import NewItem from "./NewItem.vue";
 import TabItem from "./TabItem.vue";
 import TabContent from "./TabContent.vue";
-// import LoadingModal from "../modals/LoadingModal.vue";
 import GalleryModal from "../modals/GalleryModal.vue";
-// import TabProgress from "./TabProgress.vue";
 
 export default {
   name: "WorksheetsContainer",
@@ -36,9 +33,7 @@ export default {
     NewItem,
     TabItem,
     TabContent,
-    // LoadingModal,
     GalleryModal
-    // TabProgress
   },
   methods: {
     async initWorksheets(){

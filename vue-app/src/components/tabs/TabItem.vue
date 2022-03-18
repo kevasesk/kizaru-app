@@ -14,8 +14,6 @@ export default {
  props:['worksheet'],
  methods:{
      async closeTab(){
-         console.log('closeTab:' + this.worksheet.id);
-
         var confirmResult = confirm('Вы уверенны что хотите закрыть эту анкету?');
         if(confirmResult){
             var username = this.worksheet.username;

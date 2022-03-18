@@ -28,10 +28,10 @@ def auth_file(obj=None):  # line:26
 
 
 Working = False  # line:42
-SuccessCount = 0  # line:43
+SuccessCount = dict()  # line:43
 Progress = {'urls': [], 'stop_on': -1}  # line:44
 Errors = []
-TestMessages = dict()
+MailingMessages = dict()
 
 class RepeatThread(Thread):
     def __init__(self):
@@ -42,10 +42,14 @@ class RepeatThread(Thread):
         while True:
             sleep(1)
             try:
-                for userKey in TestMessages:
-                    if len(TestMessages[userKey]):
-                        logging(TestMessages[userKey][0])
-                        TestMessages[userKey].pop(0)
+                for userId in MailingMessages:
+                    if len(MailingMessages[userId]):
+                        logging(MailingMessages[userId][0])
+                        MailingMessages[userId].pop(0)
+                        if not userId in SuccessCount:
+                            SuccessCount[userId] = 1
+                        else:
+                           SuccessCount[userId] = SuccessCount[userId] + 1
                         sleep(1)
             except:
                 logging(traceback.format_exc())#TODO improve erro logging
@@ -56,11 +60,12 @@ GlobalThreadTimer = RepeatThread()
 
 
 @eel.expose
-def test_message(data):
-    TestMessages[data['username']] = data['messages']
+def add_mailing_messages(data):
+    MailingMessages[data['id']] = data['messages']
+    SuccessCount[data['id']] = 0
 
 
-def mailing(links, text, UserAgent, imageId, old_urls=[]):  # links, text, UserAgent
+def mailing(userId, text, UserAgent, imageId):  # links, text, UserAgent
     global Working, SuccessCount, Progress, Errors,  globalSessions  # line:48
     Errors = []
     for OO00O000OO0O000OO, link in enumerate(links):  # line:49
@@ -402,7 +407,8 @@ def closeTab(username):
         if os.path.exists(accountsFileName) and os.path.getsize(accountsFileName) > 0: 
             with open(accountsFileName, 'rb') as handle:
                 data = pickle.load(handle)
-                del data[username]
+                if username in data:
+                    del data[username]
             with open(accountsFileName, 'wb+') as handle:
                 pickle.dump(data, handle)
     except Exception as e:
@@ -437,7 +443,7 @@ def stop_mailing(targetId):  # line:303
 
 @eel.expose  # line:311
 def get_success_count(targetId):  # line:312
-    return SuccessCount  # line:313
+    return SuccessCount[targetId]  # line:313
 
 
 @eel.expose  # line:316

@@ -12,14 +12,14 @@ const store = createStore({
 
         galleryActiveImageId: [],
         galleryActiveImageSrc: [],
-        currentGalleryWorksheetId: null
+        currentGalleryWorksheetId: null,
+
+        //sending
+        sendingWorking: {}
     },
     mutations: {
         clearWorksheets(state){
             state.worksheets = [];
-        },
-        addGalleryImage (state, image) {
-            state.galleryImages.push(image);
         },
         addWorksheet (state, worksheet) {
             state.worksheets.push(worksheet);
@@ -35,6 +35,11 @@ const store = createStore({
             const index = state.worksheets.findIndex((el) => el.id === worksheet.id);
             if (index > -1) state.worksheets.splice(index, 1);
         },
+        
+        addGalleryImage (state, image) {
+            state.galleryImages.push(image);
+        },
+
      },
      getters: {
         getWorksheet: (state) => (worksheetId) => {

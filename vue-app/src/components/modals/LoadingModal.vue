@@ -1,6 +1,6 @@
 <template>
   <div class="background-modal" id="loading-modal" v-show="!isHidden()">
-    <img class="modal-loader" src="img/loader.gif" width="30" height="30" />
+    <img class="modal-loader" src="img/loader_4.gif" width="30" height="30" />
   </div>
 </template>
 
