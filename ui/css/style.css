@@ -394,7 +394,7 @@ button.close:hover {
 }
 
 /* Errors */
-#errorsModal .modal-dialog {
+[data-role="errorsModal"] .modal-dialog {
 	max-width: 800px;
 	width: 800px;
 }

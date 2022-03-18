@@ -14,17 +14,22 @@ export default {
  props:['worksheet'],
  methods:{
      async closeTab(){
-        var confirmResult = confirm('Вы уверенны что хотите закрыть эту анкету?');
-        if(confirmResult){
-            var username = this.worksheet.username;
-            let result = await window.eel.closeTab(username)()
-            if(result === true){
-                this.$store.commit('removeWorksheet', this.worksheet);
-                this.toast('Вы вышли из анкеты', 'success');
-            }else{
-                this.toast('Что-то пошло не так при закрытии вкладки.', 'error');
+        if(this.$store.state.sendingWorking[this.worksheet.id]){
+            this.toast('Вы не можете закрыть анкету прямо сейчас, дождитесь окончания отправки сообщений.', 'warning');
+        }else{
+            var confirmResult = confirm('Вы уверенны что хотите закрыть эту анкету?');
+            if(confirmResult){
+                var username = this.worksheet.username;
+                let result = await window.eel.closeTab(username)()
+                if(result === true){
+                    this.$store.commit('removeWorksheet', this.worksheet);
+                    this.toast('Вы вышли из анкеты', 'success');
+                }else{
+                    this.toast('Что-то пошло не так при закрытии вкладки.', 'error');
+                }
             }
         }
+
 
      }
  }

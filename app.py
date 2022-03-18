@@ -27,11 +27,13 @@ def auth_file(obj=None):  # line:26
         return obj  # line:39
 
 
+
 Working = False  # line:42
 SuccessCount = dict()  # line:43
 Progress = {'urls': [], 'stop_on': -1}  # line:44
-Errors = []
+Errors = dict()
 MailingMessages = dict()
+
 
 class RepeatThread(Thread):
     def __init__(self):
@@ -43,9 +45,9 @@ class RepeatThread(Thread):
             sleep(1)
             try:
                 for userId in MailingMessages:
-                    if len(MailingMessages[userId]):
-                        logging(MailingMessages[userId][0])
-                        MailingMessages[userId].pop(0)
+                    if len(MailingMessages[userId]['links']):
+                        mailing(MailingMessages[userId]);
+                        MailingMessages[userId]['links'].pop(0)
                         if not userId in SuccessCount:
                             SuccessCount[userId] = 1
                         else:
@@ -61,35 +63,27 @@ GlobalThreadTimer = RepeatThread()
 
 @eel.expose
 def add_mailing_messages(data):
-    MailingMessages[data['id']] = data['messages']
+    MailingMessages[data['id']] = {
+        'id':      data['id'],
+        'links':   data['links'],
+        'message': data['message'],
+        'ua':      data['ua'],
+        'dataId':  data['dataId'],
+    }
+
     SuccessCount[data['id']] = 0
 
 
-def mailing(userId, text, UserAgent, imageId):  # links, text, UserAgent
-    global Working, SuccessCount, Progress, Errors,  globalSessions  # line:48
-    Errors = []
-    for OO00O000OO0O000OO, link in enumerate(links):  # line:49
-        if not Working:  # line:50
-            break  # line:51
-        if old_urls == links and OO00O000OO0O000OO < Progress['stop_on'] + 1:  # line:52
-            SuccessCount += 1  # line:53
-            continue  # line:54
-        try:  # line:55
-            sleep(5)  # line:66
-            logging('links' + ' '.join(links))
-            if link == '2' or link == '4':
-                raise Exception('Something going wrong with link')
-
-            logging('link:' + link)
-            logging('---------')
-            SuccessCount += 1  # line:171
-        except Exception as e:
-            Errors.append(link)
-            logging(traceback.format_exc())
-            continue
-    sleep(1)  # line:175
-    Working = False  # line:176
-    SuccessCount = 0  # line:177
+def mailing(mailingMessage):
+    global Errors
+    logging(mailingMessage['links'][0])
+    if not mailingMessage['id'] in Errors:
+        Errors[mailingMessage['id']] = { 'errors' : [] }
+    Errors[mailingMessage['id']]['errors'].append('error')
+    # logging(mailingMessage['message'])
+    # logging(mailingMessage['ua'])
+    # logging(mailingMessage['dataId'])
+    # logging('-------------------------------------')
 
 
 def mailing_d(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, imageId, old_urls=[]):  # line:47
@@ -181,7 +175,9 @@ def mailing_d(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, imageId, 
 
 @eel.expose
 def get_errors_list(targetId):
-    return Errors
+    global Errors
+    logging(Errors)
+    return Errors[targetId]['errors']
 
 
 @eel.expose

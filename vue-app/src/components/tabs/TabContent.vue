@@ -64,17 +64,20 @@
             </div>
         </div>
         <TabProgress :worksheet="worksheet" />
+        <ErrorsModal :worksheet="worksheet" /> 
     </div>
 </template>
 
 <script>
 import TabProgress from "./TabProgress.vue";
+import ErrorsModal from "../modals/ErrorsModal.vue";
 
 export default {
     name: "TabContent",
     props: ["worksheet"],
     components:{
-        TabProgress
+        TabProgress,
+        ErrorsModal
     },
     data() {
         return {
@@ -192,49 +195,56 @@ export default {
         },
         async start(targetId){
            var self = this;
-           window.jQuery('#'+targetId).find('[data-role="progressModal"]').modal('show');
-            
-            // gallery dataid - this.$store.state.galleryActiveImageId[this.$store.state.currentGalleryWorksheetId]
-            if(!this.isWorking(targetId)){
-                
-                await window.eel.add_mailing_messages({
-                    id: this.worksheet.id,
-                    links: this.links,
-                    message: this.message,
-                    ua: this.ua,
-                    dataId: this.$store.state.galleryActiveImageId[this.worksheet.id]
-                })()
-                this.$store.state.sendingWorking[targetId] = true;
-
-                this.updateProgressBar(targetId, 0, this.links.length)
-                let interval = setInterval(async function(){
-                    let successCount = await window.eel.get_success_count(targetId)()
-                    // stop
-                    if (successCount == this.links.length) {
-                        self.updateProgressBar(targetId, successCount, this.links.length)
-                        clearInterval(interval)
-                        self.toast('Рассылка завершена', 'success')
-                        window.jQuery('#'+targetId).find('[data-role="progressModal"]').modal('hide');
-                        self.$store.state.sendingWorking[targetId] = false;
-                        //window.jQuery('#'+targetId+' [data-role="start-btn"]').html('Начать работу')
-                        
-
-                        // let errorLinks = await eel.get_errors_list()(targetId)
-                        // if(errorLinks && errorLinks.length > 0){
-                        // 	$('#errorsModal').modal('show');//TODO
-                        // 	var text = '';
-                        // 	for(var i = 0; i < errorLinks.length; i++){
-                        // 		text += errorLinks[i] + '\n';
-                        // 	}
-                        // 	$('#errorLinks').val(text);//TODO
-                        // }
-                    }
-                    self.updateProgressBar(targetId, successCount, this.links.length)
-                }, 1000)
-                //window.jQuery('#'+targetId+' [data-role="start-btn"]').html('Работаем...')
-            }else{
+           var links = window.jQuery.trim(this.links).split('\n')
+           if(links != [] && this.message != '' && this.ua != '' && this.$store.state.galleryActiveImageId[this.worksheet.id]){
                 window.jQuery('#'+targetId).find('[data-role="progressModal"]').modal('show');
-            }
+                
+                // gallery dataid - this.$store.state.galleryActiveImageId[this.$store.state.currentGalleryWorksheetId]
+                if(!this.isWorking(targetId)){
+                    
+                    await window.eel.add_mailing_messages({
+                        id: this.worksheet.id,
+                        links: links,
+                        message: this.message,
+                        ua: this.ua,
+                        dataId: this.$store.state.galleryActiveImageId[this.worksheet.id]
+                    })()
+                    // TODO send all real data to sender
+                    this.$store.state.sendingWorking[targetId] = true;
+
+                    this.updateProgressBar(targetId, 0, links.length)
+                    let interval = setInterval(async function(){
+                        let successCount = await window.eel.get_success_count(targetId)()
+                        // stop
+                        if (successCount == links.length) {
+                            self.updateProgressBar(targetId, successCount, links.length)
+                            clearInterval(interval)
+                            self.toast('Рассылка завершена ('+self.worksheet.username+')', 'success')
+                            window.jQuery('#'+targetId).find('[data-role="progressModal"]').modal('hide');
+                            self.$store.state.sendingWorking[targetId] = false;
+
+                            let errorLinks = await window.eel.get_errors_list(targetId)()
+                            if(errorLinks && errorLinks.length > 0){
+                                //window.jQuery('#'+targetId).find('[data-role="errorsModal"]').modal({backdrop: false});
+                                //window.jQuery('#'+targetId).find('[data-role="errorsModal"]').draggable({handle: ".modal-header"});
+                                window.jQuery('#'+targetId).find('[data-role="errorsModal"]').modal('show');
+                                var text = '';
+                                for(var i = 0; i < errorLinks.length; i++){
+                                    text += errorLinks[i] + '\n';
+                                }
+                                window.jQuery('#'+targetId).find('[data-role="errorLinks"]').val(text);
+                            }
+                        }
+                        self.updateProgressBar(targetId, successCount, links.length)
+                    }, 1000)
+                    //window.jQuery('#'+targetId+' [data-role="start-btn"]').html('Работаем...')
+                } else {
+                    window.jQuery('#'+targetId).find('[data-role="progressModal"]').modal('show');
+                }
+           }else{
+               this.toast('Пожалуйста, укажите всю необходимую информацию для запуска рассылки', 'warning')
+           }
+    
  
             
         },

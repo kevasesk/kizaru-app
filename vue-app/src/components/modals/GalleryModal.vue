@@ -15,10 +15,10 @@
 					</template>
 				</div>
 			</div>
-			<!-- <div class="modal-footer">
+			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal" @click="closeGallery()">Отмена</button>
-				<button type="button" class="btn btn-success" @click="saveImage()">Выбрать картинку</button>
-			</div> -->
+				<button type="button" class="btn btn-success" @click="closeGallery()">Выбрать картинку</button>
+			</div>
 		</div>
 	</div>
 </div>
@@ -36,13 +36,12 @@ export default {
 		closeGallery(){
 			window.jQuery('#galleryModal').modal('hide');
 		},
-		// saveImage(){
-		// 	//var dataId = this.$store.state.galleryActiveImageId;
-		// 	window.jQuery('#galleryModal').modal('hide');
-		// },
 		getImages(){
 			return this.$store.state.galleryImages;
 		}
+	},
+	mounted(){
+		window.jQuery('#galleryModal').draggable({handle: ".modal-header"});
 	}
 }
 </script>

@@ -29,17 +29,20 @@ export default {
  name: "TabProgress",
  props:['worksheet'],
  methods:{
-     closeProgressModal(targetId){
+    closeProgressModal(targetId){
         window.jQuery('#'+targetId).find('[data-role="progressModal"]').modal('hide');
-     },
-     async stop(){
+    },
+    async stop(){
         await window.eel.test_message({
             id: this.worksheet.id,
             messages: []
         })()
         this.$store.state.sendingWorking[this.worksheet.id] = false;
         window.jQuery('#'+this.worksheet.id).find('[data-role="progressModal"]').modal('hide');
-     },
+    },
+    mounted(){
+        window.jQuery('#'+this.worksheet.id).find('[data-role="progressModal"]').draggable({handle: ".modal-header"});
+    }
  }
 }
 </script>
