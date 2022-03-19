@@ -26,7 +26,6 @@ const store = createStore({
         },
         updateWorksheet (state, worksheet) {
             const index = state.worksheets.findIndex((el) => el.id === worksheet.id);
-            console.log(worksheet.id);
             if (index > -1){
                 state.worksheets[index] = worksheet;
             }

@@ -118,7 +118,6 @@ export default {
         async setUserAgent(){
             var username = this.username;
             var ua = this.ua;
-            console.log(this.ua);
             if (ua != '' && (/(opera|safari|firefox|(?!chrome))\/?\s*(\.?\d+(\.\d+)*)/i).test(ua) && ua.length >= 16) {
                 let result = await window.eel.set_user_agent(ua, username)()
                 if(result){

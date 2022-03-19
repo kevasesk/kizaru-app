@@ -21,7 +21,6 @@ export default {
             this.$store.state.isLoggedIn = false;
         }else{
           this.toast('Не удалось выйти', 'error')
-          console.log(result);
         }
         
       });
