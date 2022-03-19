@@ -33,9 +33,12 @@ export default {
         window.jQuery('#'+targetId).find('[data-role="progressModal"]').modal('hide');
     },
     async stop(){
-        await window.eel.test_message({
+        await window.eel.add_mailing_messages({
             id: this.worksheet.id,
-            messages: []
+            links: [],
+            message: this.message,
+            ua: this.ua,
+            dataId: this.$store.state.galleryActiveImageId[this.worksheet.id]
         })()
         this.$store.state.sendingWorking[this.worksheet.id] = false;
         window.jQuery('#'+this.worksheet.id).find('[data-role="progressModal"]').modal('hide');

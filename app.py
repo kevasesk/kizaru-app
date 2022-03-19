@@ -74,39 +74,37 @@ def add_mailing_messages(data):
     SuccessCount[data['id']] = 0
 
 
-def mailing(mailingMessage):
+def mailing_d(mailingMessage):
     global Errors
     logging(mailingMessage['links'][0])
-    if not mailingMessage['id'] in Errors:
-        Errors[mailingMessage['id']] = { 'errors' : [] }
-    Errors[mailingMessage['id']]['errors'].append('error')
+    if mailingMessage['links'][0] == 'link2' or mailingMessage['links'][0] == 'link4' or mailingMessage['links'][0] == 'link222':
+        if not mailingMessage['id'] in Errors:
+            Errors[mailingMessage['id']] = { 'errors' : [] }
+        Errors[mailingMessage['id']]['errors'].append(mailingMessage['links'][0])
     # logging(mailingMessage['message'])
     # logging(mailingMessage['ua'])
     # logging(mailingMessage['dataId'])
     # logging('-------------------------------------')
 
 
-def mailing_d(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, imageId, old_urls=[]):  # line:47
-    global Working, SuccessCount, Progress, Errors, s  # line:48
-    Errors = []
-    for OO00O000OO0O000OO, O0O00O0O0OOOO00OO in enumerate(OOO00OOOO0O0OOOOO):  # line:49
-        if not Working:  # line:50
-            break  # line:51
-        if old_urls == OOO00OOOO0O0OOOOO and OO00O000OO0O000OO < Progress['stop_on'] + 1:  # line:52
-            SuccessCount += 1  # line:53
-            continue  # line:54
-        try:  # line:55
-            if 'https://www.dream-singles.com/messaging/write.php?replyId=' not in O0O00O0O0OOOO00OO:  # line:56
-                SuccessCount += 1  # line:57
-                continue  # line:58
-            sleep(1)
-            OO0O0000OO00O000O = s.get(O0O00O0O0OOOO00OO, headers={
+def mailing(mailingMessage):  # links, text, ua, imageId,
+    global Errors
+    id      = mailingMessage['id']
+    link    = mailingMessage['links'][0]
+    text    = mailingMessage['message']
+    ua      = mailingMessage['ua']
+    imageId = mailingMessage['dataId']
+    try: 
+        if 'https://www.dream-singles.com/messaging/write.php?replyId=' not in link:
+            addError(id, link)
+        else:
+            OO0O0000OO00O000O = globalSessions[id].get(link, headers={
                 "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
                 "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
-                "Connection": "keep-alive", "DNT": "1", "Host": "www.dream-singles.com", "Referer": O0O00O0O0OOOO00OO,
+                "Connection": "keep-alive", "DNT": "1", "Host": "www.dream-singles.com", "Referer": link,
                 "Sec-Fetch-Dest": "document", "Sec-Fetch-Mode": "navigate", "Sec-Fetch-Site": "same-origin",
                 "Sec-Fetch-User": "?1", "Upgrade-Insecure-Requests": "1",
-                "User-Agent": O0OOO00OOOO00OOOO, }).text  # line:86
+                "User-Agent": ua, }).text  # line:86
             _O0OO0O0O00OOO0O00 = ('<input type="hidden" name="draftid" id="draftid" value="', '"')  # line:89
             OO000O0OO0O0O0O0O = OO0O0000OO00O000O[
                                 OO0O0000OO00O000O.find(_O0OO0O0O00OOO0O00[0]) + len(_O0OO0O0O00OOO0O00[0]):]  # line:90
@@ -133,24 +131,18 @@ def mailing_d(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, imageId, 
                                 OO0O0000OO00O000O.find(_O0OO0O0O00OOO0O00[0]) + len(_O0OO0O0O00OOO0O00[0]):]  # line:105
             OOOO000O0O0O0O0O0 = OOOO000O0O0O0O0O0[:OOOO000O0O0O0O0O0.find(_O0OO0O0O00OOO0O00[1])]  # line:106
 
-            # OO0O0000OO00O000O = s.get(
-            #     'https://www.dream-singles.com/members/gallery.php?__tcAction=loadImages&selectable=1',
-            #     headers={"Accept": "*/*", "Accept-Encoding": "gzip, deflate, br",
-            #              "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3", "Connection": "keep-alive",
-            #              "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8", "DNT": "1",
-            #              "Host": "www.dream-singles.com", "Referer": O0O00O0O0OOOO00OO, "Sec-Fetch-Dest": "empty",
-            #              "Sec-Fetch-Mode": "cors", "Sec-Fetch-Site": "same-origin", "User-Agent": O0OOO00OOOO00OOOO,
-            #              "X-Requested-With": "XMLHttpRequest", }).text  # line:128
-            # _O0OO0O0O00OOO0O00 = (
-            # r'<div class=\"col-xs-6 col-sm-6 col-md-4 col-xl-3 text-center gallery-media-wrapper\" data-id=\"',
-            # r'\"')  # line:129
-            # OO0O0O0O0O000OO0O = OO0O0000OO00O000O[
-            #                     OO0O0000OO00O000O.find(_O0OO0O0O00OOO0O00[0]) + len(_O0OO0O0O00OOO0O00[0]):]  # line:130
-            # OO0O0O0O0O000OO0O = OO0O0O0O0O000OO0O[:OO0O0O0O0O000OO0O.find(_O0OO0O0O00OOO0O00[1])]  # line:131
-
-            message = bytes(O0O0OOO00O00000OO, 'UTF-8').decode('utf-8')
+            message = bytes(text, 'UTF-8').decode('utf-8')
             message = str(message.encode(encoding="ascii",errors="ignore"), 'utf-8')
-            OO0O0000OO00O000O = s.post(
+
+            # logging(id)
+            # logging(link)
+            # logging(message)
+            # logging(ua)
+            # logging(imageId)
+            # logging(OOOO000O0O0O0O0O0)
+            # logging('-------------------------------------')
+
+            OO0O0000OO00O000O = globalSessions[id].post(
                 'https://www.dream-singles.com/messaging/write.php?replyId=%s&receiver=%s&mode=inbox&page=1&q=%s' % (
                 OOO0OOOOOOO0OO00O, OOO0O00O0OOO0O00O, OOOO000O0O0O0O0O0), headers={
                     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
@@ -158,25 +150,26 @@ def mailing_d(OOO00OOOO0O0OOOOO, O0O0OOO00O00000OO, O0OOO00OOOO00OOOO, imageId, 
                     "Connection": "keep-alive",
                     "Content-Type": "multipart/form-data; boundary=---------------------------221234741415091439122798769189",
                     "DNT": "1", "Host": "www.dream-singles.com", "Origin": "https://www.dream-singles.com",
-                    "Referer": O0O00O0O0OOOO00OO, "Sec-Fetch-Dest": "document", "Sec-Fetch-Mode": "navigate",
+                    "Referer": link, "Sec-Fetch-Dest": "document", "Sec-Fetch-Mode": "navigate",
                     "Sec-Fetch-Site": "same-origin", "Sec-Fetch-User": "?1", "Upgrade-Insecure-Requests": "1",
-                    "User-Agent": O0OOO00OOOO00OOOO},
+                    "User-Agent": ua},
                 data='-----------------------------221234741415091439122798769189\\r\nContent-Disposition: form-data; name="mailFolders"\r\n\r\n0\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="targetFolder"\r\n\r\n0\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="draftid"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="receiver"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="sender"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="replyId"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="which_message"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="%s"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="message"\r\n\r\n\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="media-gallery-selection"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="video_attachment"; filename=""\r\nContent-Type: application/octet-stream\r\n\r\n\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="__tcAction[send]"\r\n\r\nSend\r\n-----------------------------221234741415091439122798769189--\r\n' % (
                 OO000O0OO0O0O0O0O, OOO0O00O0OOO0O00O, OO000O0OO0O0OO0OO, OOO0OOOOOOO0OO00O, O0000O000O0O0OOO0,
-                O0000O000O0O0OOO0, message, imageId)).text  # line:168
+                O0000O000O0O0OOO0, message, imageId)).text
+    except Exception as e:
+        addError(id, link)
+        logging(traceback.format_exc())
 
-            SuccessCount += 1  # line:171
-        except Exception as e:
-            Errors.append(link)
-            logging(traceback.format_exc())
-    sleep(1)  # line:175
-    Working = False  # line:176
-    SuccessCount = 0  # line:177
+
+def addError(id, message):
+    if not id in Errors:
+        Errors[id] = { 'errors' : [] }
+    Errors[id]['errors'].append(message)
+
 
 @eel.expose
 def get_errors_list(targetId):
     global Errors
-    logging(Errors)
     return Errors[targetId]['errors']
 
 
@@ -414,14 +407,14 @@ def closeTab(username):
 
 
 @eel.expose  # line:288
-def start_mailing(targetId, O00OO000O0O00O00O, O00O0OO000000OOOO, O000OO00O00OOO000, imageId):  # line:289
+def start_mailing(targetId, links, text, ua, imageId):  # targetId, links, text, ua, imageId
     global Working, SuccessCount, Progress  # line:290
     try:  # line:291
         Working = True  # line:292
         SuccessCount = 0  # line:293
         Thread(target=mailing,
-               args=(O00OO000O0O00O00O, O00O0OO000000OOOO, O000OO00O00OOO000, imageId, Progress['urls'])).start()  # line:294
-        Progress['urls'] = O00OO000O0O00O00O  # line:295
+               args=(links, text, ua, imageId, Progress['urls'])).start()  # line:294
+        Progress['urls'] = links  # line:295
         return True  # line:296
     except Exception as e:  # line:297
         logging(traceback.format_exc())

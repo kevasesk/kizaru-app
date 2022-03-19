@@ -21,6 +21,9 @@ body {
 	margin-top: -30px !important;
 }
 
+#login-wrapper{
+	margin-left: 20px;
+}
 .login-wrapper-container{
 	margin-top:200px;
 }
