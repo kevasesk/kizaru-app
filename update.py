@@ -26,5 +26,7 @@ for fileName in files:
     if not os.path.exists('ui/dist/css'):
         os.makedirs('ui/dist/css')
     with open(fileName, 'wb+') as file:
-        file.write(bytes(data.text, 'utf-8'))
-
+        if '.gif' in fileName:
+            file.write(data.content)
+        else:
+            file.write(bytes(data.text, 'utf-8'))
