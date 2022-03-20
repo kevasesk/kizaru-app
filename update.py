@@ -1,5 +1,4 @@
-import requests, sys
-from datetime import datetime
+import requests, sys, os
 
 remote_url = 'https://raw.githubusercontent.com/kevasesk/kizaru-app/master/'
 
@@ -20,15 +19,11 @@ files = [
 ]
 
 for fileName in files:
-    try:
-        data = requests.get(remote_url + fileName)
-        with open(fileName, 'wb') as file:
-            file.write(bytes(data.text, 'utf-8'))
-    except Exception as e:
-        logging(traceback.format_exc())
+    data = requests.get(remote_url + fileName)
+    if not os.path.exists('ui/dist/js'):
+        os.makedirs('ui/dist/js')
+    if not os.path.exists('ui/dist/css'):
+        os.makedirs('ui/dist/css')
+    with open(fileName, 'wb+') as file:
+        file.write(bytes(data.text, 'utf-8'))
 
-def logging(message):
-    f = open("debug.log", "a")
-    today = datetime.now()
-    f.write('\n' + today.strftime("%b-%d-%Y-%T") + ' - ' + str(message))
-    f.close()
