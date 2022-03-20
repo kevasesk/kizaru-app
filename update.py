@@ -16,6 +16,7 @@ files = [
     'ui/dist/js/chunk-vendors.d0f847fa.js',
     'ui/dist/js/chunk-vendors.d0f847fa.js.map',
     'ui/dist/css/app.2e4c87eb.css',
+    'ui/img/loader_4.gif'
 ]
 
 for fileName in files:
