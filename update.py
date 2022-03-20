@@ -1,4 +1,5 @@
 import requests, sys
+from datetime import datetime
 
 remote_url = 'https://raw.githubusercontent.com/kevasesk/kizaru-app/master/'
 
@@ -24,4 +25,10 @@ for fileName in files:
         with open(fileName, 'wb') as file:
             file.write(bytes(data.text, 'utf-8'))
     except Exception as e:
-        logging(traceback.format_exc()
+        logging(traceback.format_exc())
+
+def logging(message):
+    f = open("debug.log", "a")
+    today = datetime.now()
+    f.write('\n' + today.strftime("%b-%d-%Y-%T") + ' - ' + str(message))
+    f.close()
