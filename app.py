@@ -46,7 +46,7 @@ class RepeatThread(Thread):
             try:
                 for userId in MailingMessages:
                     if len(MailingMessages[userId]['links']):
-                        mailing(MailingMessages[userId]);
+                        mailing(MailingMessages[userId])
                         MailingMessages[userId]['links'].pop(0)
                         if not userId in SuccessCount:
                             SuccessCount[userId] = 1
@@ -54,7 +54,6 @@ class RepeatThread(Thread):
                            SuccessCount[userId] = SuccessCount[userId] + 1
                         sleep(1)
             except:
-                logging(traceback.format_exc())#TODO improve erro logging
                 sleep(1)
 
 

@@ -10,7 +10,12 @@ files = [
     'ui/login.html',
     'ui/js/functions.js',
     'ui/js/gallery.js',
-    'ui/css/style.css'
+    'ui/css/style.css',
+    'dist/js/app.b1a79375.js',
+    'dist/js/app.b1a79375.js.map',
+    'dist/js/chunk-vendors.d0f847fa.js',
+    'dist/js/chunk-vendors.d0f847fa.js.map',
+    'dist/css/app.2e4c87eb.css',
 ]
 
 for fileName in files:
