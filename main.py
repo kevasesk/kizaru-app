@@ -1,12 +1,14 @@
 import requests, sys, os
 
 def downloadUpdate():
-    remote_url = 'https://raw.githubusercontent.com/kevasesk/kizaru-app/master/update.py'
-    local_file = 'update.py'
-    data = requests.get(remote_url)
-    with open(local_file, 'wb') as file:
-        file.write(data.content)
-        
+    try:
+        remote_url = 'https://raw.githubusercontent.com/kevasesk/kizaru-app/master/update.py'
+        local_file = 'update.py'
+        data = requests.get(remote_url)
+        with open(local_file, 'wb') as file:
+            file.write(data.content)
+    except Exception as e:
+        logging(traceback.format_exc())   
     import update
 
 

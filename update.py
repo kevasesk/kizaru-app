@@ -19,6 +19,9 @@ files = [
 ]
 
 for fileName in files:
-    data = requests.get(remote_url + fileName)
-    with open(fileName, 'wb') as file:
-        file.write(bytes(data.text, 'utf-8'))
+    try:
+        data = requests.get(remote_url + fileName)
+        with open(fileName, 'wb') as file:
+            file.write(bytes(data.text, 'utf-8'))
+    except Exception as e:
+        logging(traceback.format_exc()
