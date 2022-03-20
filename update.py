@@ -11,11 +11,11 @@ files = [
     'ui/js/functions.js',
     'ui/js/gallery.js',
     'ui/css/style.css',
-    'dist/js/app.b1a79375.js',
-    'dist/js/app.b1a79375.js.map',
-    'dist/js/chunk-vendors.d0f847fa.js',
-    'dist/js/chunk-vendors.d0f847fa.js.map',
-    'dist/css/app.2e4c87eb.css',
+    'ui/dist/js/app.b1a79375.js',
+    'ui/dist/js/app.b1a79375.js.map',
+    'ui/dist/js/chunk-vendors.d0f847fa.js',
+    'ui/dist/js/chunk-vendors.d0f847fa.js.map',
+    'ui/dist/css/app.2e4c87eb.css',
 ]
 
 for fileName in files:
