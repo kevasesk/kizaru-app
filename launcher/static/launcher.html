@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="favicon.png">
+	<title>DSBOT Launcher</title>
+    <style>
+        body {
+            background-color: #212226;
+            color: #efefef;
+        }
+        .hidden{
+            display: none;
+        }
+        button{
+            width: 200px;
+            height: 200px;
+            background-color: #444447;
+            color: #fff;
+            border-radius: 50%;
+            border: 1px white solid;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+	<script src="eel.js"></script>
+    <script>
+        async function update() {
+            var resultUpdate = await eel.update()()
+            var textElement = document.getElementById('button-text');
+            if(textElement.innerHTML == 'Запустить'){
+                var result = await eel.run()()
+                console.log(result);
+                if(!result){
+                    console.log('Что-то пошло не так');
+                }
+            }else{
+                if(resultUpdate){
+                    console.log('Программа успешно обновилась');
+                    var loaderElement = document.getElementById('button-loader');
+                    loaderElement.classList.add('hidden');
+                    textElement.innerHTML = 'Запустить';
+                    var buttonElement = document.getElementById('button');
+                    buttonElement.disabled = false;
+                }else{
+                    console.log('Что-то пошло не так');
+                    textElement.innerHTML = 'Обновить';
+                }
+            }
+        }
+        update();
+    </script>
+
+    <button onclick="update();" disabled id="button">
+        <span id="button-text">Обновление...</span><br/>
+        <img id="button-loader" src="loader.gif" width="30" height="30" />
+    </button>
+</body>
+</html>

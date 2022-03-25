@@ -1,0 +1,1 @@
+../python397/python.exe -m eel launcher.py static --onefile  --noconsole --icon=static/favicon.ico --name=DSBot
