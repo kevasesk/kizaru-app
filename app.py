@@ -270,8 +270,9 @@ def logout():  # line:186
 @eel.expose  # line:194
 def login(username, password, save_login_details=False):  # line:195
     try:  # line:198
-        result = requests.post('http://shalom3228.zzz.com.ua/api/get.php', data={'username': username, 'password': password})  # line:199
+        result = requests.post('http://shalom3228.zzz.com.ua/api/get.php', data={'username': username, 'password': password})
         if result.json()['success'] is True:  # line:200
+            unique = requests.post('http://shalom3228.zzz.com.ua/api/addLoginCount.php', data={'login': username})
             if save_login_details is True:  # line:201
                 auth_file(
                     {'username': username, 'password': password, 'auto_login': True})  # line:202
