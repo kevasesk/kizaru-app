@@ -254,6 +254,56 @@ def load_links(username):  # line:181
     return True
 
 
+@eel.expose
+def save_chat_messages(username, messages_one, messages_two):
+    try:
+        accountsFileName = 'accounts.pkl'
+        data = {}
+        if os.path.exists(accountsFileName): 
+            with open(accountsFileName, 'rb') as handle:
+                data = pickle.load(handle)
+                if username not in data:
+                    data[username] = {}
+                data[username]['messages_one'] = messages_one
+                data[username]['messages_two'] = messages_two
+            with open(accountsFileName, 'wb+') as handle:   
+                pickle.dump(data, handle)
+        else:  # line:36
+            with open(accountsFileName, 'wb+') as handle:
+                if username not in data:
+                    data[username] = {}
+                data[username]['messages_one'] = messages_one
+                data[username]['messages_two'] = messages_two
+                pickle.dump(data, handle)
+    except Exception as e:
+        logging(traceback.format_exc())
+
+
+    return True
+
+    
+@eel.expose
+def load_chat_messages(username):
+    try:
+        accountsFileName = 'accounts.pkl'
+        data = {}
+        if os.path.exists(accountsFileName): 
+            with open(accountsFileName, 'rb') as handle:
+                data = pickle.load(handle)
+                result = {}
+                if "messages_one" in data[username]:
+                    result['messages_one'] = data[username]['messages_one']
+                if "messages_two" in data[username]:
+                    result['messages_two'] = data[username]['messages_two']
+                return result
+        else:  # line:36
+            return {}
+    except Exception as e:
+        logging(traceback.format_exc())
+
+    return True
+
+
 @eel.expose  # line:185
 def logout():  # line:186
     try:

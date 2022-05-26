@@ -401,3 +401,6 @@ button.close:hover {
 	max-width: 800px;
 	width: 800px;
 }
+::placeholder{
+	font-size: 1rem;
+}

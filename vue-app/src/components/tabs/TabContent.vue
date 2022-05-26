@@ -51,6 +51,7 @@
                 <button type="button" class="btn btn-dark" @click="openGallery()">Выбрать картинку</button>
             </div>
         </div>
+        <ChatComponent :worksheet="worksheet" />
         <div class="row">
             <div class="col">
                 <button data-role="start-btn" type="button" class="btn btn-block btn-dark start-btn" @click="start(id)">
@@ -71,13 +72,15 @@
 <script>
 import TabProgress from "./TabProgress.vue";
 import ErrorsModal from "../modals/ErrorsModal.vue";
+import ChatComponent from "./ChatComponent.vue";
 
 export default {
     name: "TabContent",
     props: ["worksheet"],
     components:{
         TabProgress,
-        ErrorsModal
+        ErrorsModal,
+        ChatComponent
     },
     data() {
         return {
