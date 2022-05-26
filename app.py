@@ -266,13 +266,25 @@ def logout():  # line:186
 
     return True  # line:191
 
+def encodeMachine():
+    import platform, base64
+
+    try:
+        machine = ''.join(platform.uname()) + platform.processor()
+        encoded = machine.encode('utf-8')
+        base64_bytes = base64.b64encode(encoded)
+        base64_message = base64_bytes.decode('utf-8')
+        return base64_message
+    except Exception as e:  # line:207
+        logging(traceback.format_exc())
+        return ''
 
 @eel.expose  # line:194
 def login(username, password, save_login_details=False):  # line:195
     try:  # line:198
         result = requests.post('http://shalom3228.zzz.com.ua/api/get.php', data={'username': username, 'password': password})
         if result.json()['success'] is True:  # line:200
-            unique = requests.post('http://shalom3228.zzz.com.ua/api/addLoginCount.php', data={'login': username})
+            unique = requests.post('http://shalom3228.zzz.com.ua/api/addLoginCount.php', data={'login': username, 'machine': encodeMachine()})
             if save_login_details is True:  # line:201
                 auth_file(
                     {'username': username, 'password': password, 'auto_login': True})  # line:202
