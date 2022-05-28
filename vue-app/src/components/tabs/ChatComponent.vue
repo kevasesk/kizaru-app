@@ -1,5 +1,5 @@
 <template>
-<div>
+<div style="margin-bottom:10px;">
     <div class="row">
         <div class="col-7">
              <h6 class="block-head">Сообщения для чатов:</h6>
@@ -12,11 +12,22 @@
     <div class="row">
         <div class="col">
             
-            <textarea class="block" data-role="mail-text" v-model="messages_one" placeholder="Сообщения от сайта"></textarea>
-            <textarea class="block" data-role="mail-text" v-model="messages_two" placeholder="Сообщения от расшерения"></textarea>
+           <textarea class="block" data-role="mail-text" v-model="messages_one" placeholder="Сообщения от сайта"></textarea>
+           <textarea class="block" data-role="mail-text" v-model="messages_two" placeholder="Сообщения от расшерения"></textarea>
            
-            <button type="button" class="btn btn-dark" @click="siteStart()" style="margin-right: 5px;">Начать отправку от сайта</button>
-            <button type="button" class="btn btn-dark" @click="extentionStart()">Начать отправку от расшерения</button>
+           <template v-if="!siteProcessed">
+                <button type="button" class="btn btn-dark" @click="siteStart()" style="margin-right: 5px;">Начать отправку от сайта</button>
+           </template>
+           <template v-else>
+                <button type="button" class="btn btn-danger" @click="siteStop()" style="margin-right: 5px;">Закончить отправку от сайта <img class="modal-loader" src="img/loader_4.gif" width="30" height="30" /></button>
+           </template>
+
+            <template v-if="!extentionProcessed">
+                <button type="button" class="btn btn-dark" @click="extentionStart()">Начать отправку от расшерения</button>
+           </template>
+           <template v-else>
+                <button type="button" class="btn btn-danger" @click="siteStop()">Закончить отправку от расшерения <img class="modal-loader" src="img/loader_4.gif" width="30" height="30" /></button>
+           </template>
         </div>
     </div>
     
@@ -28,16 +39,65 @@ export default {
     data(){
         return {
             messages_one: "",
-            messages_two: ""
+            messages_two: "",
+            siteProcessed: false,
+            extentionProcessed: false
         }
     },
-    methods:{
-        siteStart(){
-            console.log(this.messages_one);
+    created() {
+        if(typeof window.socketConnection == 'undefined'){ 
+            var socketServerUrl = 'ws://localhost:8081'; // 'wss://ws.dream-singles.com/ws' //TODO
+            window.socketConnection = new WebSocket(socketServerUrl);
+            window.socketConnection.onopen = function() {
+                console.log("Connection to socket " + socketServerUrl + " opened!");
+            };
+            window.socketConnection.onmessage = function(e) {
+                 console.log(e.data);
+            };
+        }
+    },
 
+    methods:{
+        sendMessage(messageObject){
+            window.socketConnection.send(JSON.stringify(messageObject))
+        },
+        sendMessages(messages, type){
+            var self = this;
+            var number = 0;
+            var intevalTime = 1000; // 30 * 1000 // TODO
+            messages = messages.split('\n');
+            messages = messages.filter(n => n);
+            if(messages.length > 0 ){
+                if(type == 'site'){
+                    self.siteProcessed = true;
+                }else{
+                    self.extentionProcessed = true;
+                }
+                var inteval = setInterval(function(){
+                    self.sendMessage({
+                        type: 'start-auto-invite',
+                        payload: messages[number],
+                        block: true,
+                        ignore: true
+                    });
+                    number++;
+                    if(number == messages.length){
+                        clearInterval(inteval);
+                        if(type == 'site'){
+                            self.siteProcessed = false;
+                        }else{
+                            self.extentionProcessed = false;
+                        }
+                    }
+                }, intevalTime);
+            }
+            
+        },
+        siteStart(){
+            this.sendMessages(this.messages_one, 'site');
         },
         extentionStart(){
-            console.log(this.messages_two);
+            this.sendMessages(this.messages_two, 'extention');
         },
         async saveMessages(){
             var username =  this.worksheet.username;
@@ -67,7 +127,6 @@ export default {
                 var confirmResult = confirm('Вы уверенны что хотите загрузить сохраненный список сообщений? Текущий будет утерян.');
                 if(confirmResult){
                     let result = await window.eel.load_chat_messages(username)()
-                    console.log(result);
                     if(Array.isArray(result['messages_one']) || Array.isArray(result['messages_two'])){
                         var messages_one = '';
                         var messages_two = '';

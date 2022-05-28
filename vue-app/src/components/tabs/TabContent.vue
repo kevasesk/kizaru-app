@@ -51,7 +51,6 @@
                 <button type="button" class="btn btn-dark" @click="openGallery()">Выбрать картинку</button>
             </div>
         </div>
-        <ChatComponent :worksheet="worksheet" />
         <div class="row">
             <div class="col">
                 <button data-role="start-btn" type="button" class="btn btn-block btn-dark start-btn" @click="start(id)">
@@ -64,6 +63,8 @@
                 </button>
             </div>
         </div>
+        <ChatComponent :worksheet="worksheet" />
+        
         <TabProgress :worksheet="worksheet" />
         <ErrorsModal :worksheet="worksheet" /> 
     </div>
