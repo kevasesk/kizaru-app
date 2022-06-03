@@ -11,7 +11,6 @@
     </div>
     <div class="row">
         <div class="col">
-            
            <textarea class="block" data-role="mail-text" v-model="messages_one" placeholder="Сообщения от сайта"></textarea>
            <textarea class="block" data-role="mail-text" v-model="messages_two" placeholder="Сообщения от расшерения"></textarea>
            
@@ -26,7 +25,7 @@
                 <button type="button" class="btn btn-dark" @click="extentionStart()">Начать отправку от расшерения</button>
            </template>
            <template v-else>
-                <button type="button" class="btn btn-danger" @click="siteStop()">Закончить отправку от расшерения <img class="modal-loader" src="img/loader_4.gif" width="30" height="30" /></button>
+                <button type="button" class="btn btn-danger" @click="extentionStop()">Закончить отправку от расшерения <img class="modal-loader" src="img/loader_4.gif" width="30" height="30" /></button>
            </template>
         </div>
     </div>
@@ -41,17 +40,23 @@ export default {
             messages_one: "",
             messages_two: "",
             siteProcessed: false,
-            extentionProcessed: false
+            extentionProcessed: false,
+            siteInterval: null,
+            siteNumber: 0,
+            extentionNumber: 0
         }
     },
     created() {
-        if(typeof window.socketConnection == 'undefined'){ 
-            var socketServerUrl = 'ws://localhost:8081'; // 'wss://ws.dream-singles.com/ws' //TODO
-            window.socketConnection = new WebSocket(socketServerUrl);
-            window.socketConnection.onopen = function() {
+        if(typeof window.socketConnection  == 'undefined'){
+            window.socketConnection = [];
+        }
+        if(typeof window.socketConnection[this.worksheet.id] == 'undefined'){ 
+            var socketServerUrl = 'wss://ws.dream-singles.com/ws'; // 'wss://ws.dream-singles.com/ws' 'ws://localhost:8081' //TODO
+            window.socketConnection[this.worksheet.id] = new WebSocket(socketServerUrl);
+            window.socketConnection[this.worksheet.id].onopen = function() {
                 console.log("Connection to socket " + socketServerUrl + " opened!");
             };
-            window.socketConnection.onmessage = function(e) {
+            window.socketConnection[this.worksheet.id].onmessage = function(e) {
                  console.log(e.data);
             };
         }
@@ -59,39 +64,62 @@ export default {
 
     methods:{
         sendMessage(messageObject){
-            window.socketConnection.send(JSON.stringify(messageObject))
+            window.socketConnection[this.worksheet.id].send(JSON.stringify(messageObject))
         },
         sendMessages(messages, type){
             var self = this;
-            var number = 0;
-            var intevalTime = 1000; // 30 * 1000 // TODO
+            if(type == 'site'){
+                this.siteNumber = 0;
+            }else{
+                this.extentionNumber = 0;
+            }
+            var intevalTime = 30 * 1000; // 30 * 1000 // TODO
             messages = messages.split('\n');
             messages = messages.filter(n => n);
             if(messages.length > 0 ){
                 if(type == 'site'){
                     self.siteProcessed = true;
+                    this.siteInterval = setInterval(function(){
+                        self.sendMessage({
+                            type: 'start-auto-invite',
+                            payload: messages[self.siteNumber],
+                            block: true,
+                            ignore: true
+                        });
+                        self.siteNumber++;
+                        if(self.siteNumber == messages.length){
+                            clearInterval(self.siteInterval);
+                            self.siteProcessed = false;
+                            self.siteNumber = 0;
+                        }
+                    }, intevalTime);
                 }else{
                     self.extentionProcessed = true;
-                }
-                var inteval = setInterval(function(){
-                    self.sendMessage({
-                        type: 'start-auto-invite',
-                        payload: messages[number],
-                        block: true,
-                        ignore: true
-                    });
-                    number++;
-                    if(number == messages.length){
-                        clearInterval(inteval);
-                        if(type == 'site'){
-                            self.siteProcessed = false;
-                        }else{
+                    this.extentionInterval = setInterval(function(){
+                        self.sendMessage({
+                            type: 'start-auto-invite',
+                            payload: messages[self.extentionNumber],
+                            block: true,
+                            ignore: true
+                        });
+                        self.extentionNumber++;
+                        if(self.extentionNumber == messages.length){
+                            clearInterval(self.extentionInterval);
                             self.extentionProcessed = false;
+                            self.extentionNumber = 0;
                         }
-                    }
-                }, intevalTime);
+                    }, intevalTime);
+                }
             }
             
+        },
+        siteStop(){
+            clearInterval(this.siteInterval);
+            this.siteProcessed = false;
+        },
+        extentionStop(){
+            clearInterval(this.extentionInterval);
+            this.extentionProcessed = false;
         },
         siteStart(){
             this.sendMessages(this.messages_one, 'site');
