@@ -94,7 +94,8 @@ def mailing(mailingMessage):  # links, text, ua, imageId,
     ua      = mailingMessage['ua']
     imageId = mailingMessage['dataId']
     try: 
-        if 'https://www.dream-singles.com/messaging/write.php?replyId=' not in link:
+        #if 'https://www.dream-singles.com/messaging/write.php?replyId=' not in link:
+        if 'https://www.dream-singles.com/members/messaging/compose/' not in link:
             addError(id, link)
         else:
             OO0O0000OO00O000O = globalSessions[id].get(link, headers={
@@ -104,7 +105,7 @@ def mailing(mailingMessage):  # links, text, ua, imageId,
                 "Sec-Fetch-Dest": "document", "Sec-Fetch-Mode": "navigate", "Sec-Fetch-Site": "same-origin",
                 "Sec-Fetch-User": "?1", "Upgrade-Insecure-Requests": "1",
                 "User-Agent": ua, }).text  # line:86
-            _O0OO0O0O00OOO0O00 = ('<input type="hidden" name="draftid" id="draftid" value="', '"')  # line:89
+            _O0OO0O0O00OOO0O00 = ('<input type="hidden" id="draftid" name="messaging_compose[draftId]"  value="', '"')  # line:89
             OO000O0OO0O0O0O0O = OO0O0000OO00O000O[
                                 OO0O0000OO00O000O.find(_O0OO0O0O00OOO0O00[0]) + len(_O0OO0O0O00OOO0O00[0]):]  # line:90
             OO000O0OO0O0O0O0O = OO000O0OO0O0O0O0O[:OO000O0OO0O0O0O0O.find(_O0OO0O0O00OOO0O00[1])]  # line:91
@@ -112,19 +113,27 @@ def mailing(mailingMessage):  # links, text, ua, imageId,
             OOO0O00O0OOO0O00O = OO0O0000OO00O000O[
                                 OO0O0000OO00O000O.find(_O0OO0O0O00OOO0O00[0]) + len(_O0OO0O0O00OOO0O00[0]):]  # line:93
             OOO0O00O0OOO0O00O = OOO0O00O0OOO0O00O[:OOO0O00O0OOO0O00O.find(_O0OO0O0O00OOO0O00[1])]  # line:94
+            OOO0O00O0OOO0O00O = ''
             _O0OO0O0O00OOO0O00 = ('<input type="hidden" name="sender" id="sender" value="', '"')  # line:95
             OO000O0OO0O0OO0OO = OO0O0000OO00O000O[
                                 OO0O0000OO00O000O.find(_O0OO0O0O00OOO0O00[0]) + len(_O0OO0O0O00OOO0O00[0]):]  # line:96
             OO000O0OO0O0OO0OO = OO000O0OO0O0OO0OO[:OO000O0OO0O0OO0OO.find(_O0OO0O0O00OOO0O00[1])]  # line:97
-            _O0OO0O0O00OOO0O00 = ('<input type="hidden" name="replyId" value="', '"')  # line:98
+            OO000O0OO0O0OO0OO = ''
+            _O0OO0O0O00OOO0O00 = ('<input type="hidden" id="replyId" name="messaging_compose[replyId]" value="', '"')  # line:98
             OOO0OOOOOOO0OO00O = OO0O0000OO00O000O[
                                 OO0O0000OO00O000O.find(_O0OO0O0O00OOO0O00[0]) + len(_O0OO0O0O00OOO0O00[0]):]  # line:99
             OOO0OOOOOOO0OO00O = OOO0OOOOOOO0OO00O[:OOO0OOOOOOO0OO00O.find(_O0OO0O0O00OOO0O00[1])]  # line:100
+            replyId = OOO0OOOOOOO0OO00O
+            #fill reciver from reply value
+            reciver =  OOO0OOOOOOO0OO00O.split('-')
+            reciver = reciver[0]
             _O0OO0O0O00OOO0O00 = (
-            '<input id="which_message" type="hidden" name="which_message" value="', '"')  # line:101
+            #'<input id="which_message" type="hidden" name="which_message" value="', '"')  # line:101
+            '<input type="hidden" id="which_message" name="messaging_compose[type]" value="plain_message">', '"')  # line:101
             O0000O000O0O0OOO0 = OO0O0000OO00O000O[
                                 OO0O0000OO00O000O.find(_O0OO0O0O00OOO0O00[0]) + len(_O0OO0O0O00OOO0O00[0]):]  # line:102
             O0000O000O0O0OOO0 = O0000O000O0O0OOO0[:O0000O000O0O0OOO0.find(_O0OO0O0O00OOO0O00[1])]  # line:103
+            message_type = 'plain_message'
             _O0OO0O0O00OOO0O00 = ('&quot;search&quot;:&quot;', '&quot;')  # line:104
             OOOO000O0O0O0O0O0 = OO0O0000OO00O000O[
                                 OO0O0000OO00O000O.find(_O0OO0O0O00OOO0O00[0]) + len(_O0OO0O0O00OOO0O00[0]):]  # line:105
@@ -141,9 +150,43 @@ def mailing(mailingMessage):  # links, text, ua, imageId,
             # logging(OOOO000O0O0O0O0O0)
             # logging('-------------------------------------')
 
-            OO0O0000OO00O000O = globalSessions[id].post(
-                'https://www.dream-singles.com/messaging/write.php?replyId=%s&receiver=%s&mode=inbox&page=1&q=%s' % (
-                OOO0OOOOOOO0OO00O, OOO0O00O0OOO0O00O, OOOO000O0O0O0O0O0), headers={
+            # OO0O0000OO00O000O = globalSessions[id].post(
+            #     #'https://www.dream-singles.com/messaging/write.php?replyId=%s&receiver=%s&mode=inbox&page=1&q=%s' % (
+            #     'https://www.dream-singles.com/members/messaging/compose/?replyId=%s&receiver=%s&mode=inbox&page=1&q=%s' % (
+            #     OOO0OOOOOOO0OO00O, reciver, OOOO000O0O0O0O0O0), headers={
+            #         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+            #         "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
+            #         "Connection": "keep-alive",
+            #         "Content-Type": "multipart/form-data; boundary=---------------------------221234741415091439122798769189",
+            #         "DNT": "1", "Host": "www.dream-singles.com", "Origin": "https://www.dream-singles.com",
+            #         "Referer": link, "Sec-Fetch-Dest": "document", "Sec-Fetch-Mode": "navigate",
+            #         "Sec-Fetch-Site": "same-origin", "Sec-Fetch-User": "?1", "Upgrade-Insecure-Requests": "1",
+            #         "User-Agent": ua},
+            #     data='-----------------------------221234741415091439122798769189\\r\nContent-Disposition: form-data; name="mailFolders"\r\n\r\n0\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="targetFolder"\r\n\r\n0\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="draftid"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="receiver"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="sender"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="replyId"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="which_message"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="%s"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="message"\r\n\r\n\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="media-gallery-selection"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="video_attachment"; filename=""\r\nContent-Type: application/octet-stream\r\n\r\n\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="__tcAction[send]"\r\n\r\nSend\r\n-----------------------------221234741415091439122798769189--\r\n' % (
+            #     OO000O0OO0O0O0O0O, reciver, OO000O0OO0O0OO0OO, OOO0OOOOOOO0OO00O, message_type,
+            #     message_type, message, imageId)).text
+
+            postData = {
+                "messaging_compose[replyId]": replyId,
+                "messaging_compose[type]": "plain_message",
+                "messaging_compose[plainMessage]:": message,
+                "messaging_compose[galleryId]:": imageId,
+
+                # messaging_compose[draftId]: 
+                # messaging_compose[replyId]: 7272079-8026748-122aacfaa46d9067148bb9948d4e665a
+                # messaging_compose[type]: plain_message
+                # messaging_compose[plainMessage]: 
+                # messaging_compose[htmlMessage]: 
+                # messaging_compose[galleryId]: 
+                # messaging_compose[video]: (binary)
+                # messaging_compose[submit2]: 
+                # messaging_compose[selectedPhoto]: 
+                # messaging_compose[saveIntro]: 
+                # messaging_compose[videoReply]: 1
+                # messaging_compose[intro]: 
+            }
+            globalSessions[id].post(
+                'https://www.dream-singles.com/members/messaging/compose/?replyId=%s&receiver=%s&mode=inbox&page=1' % (replyId, reciver), headers={
                     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
                     "Accept-Encoding": "gzip, deflate, br", "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
                     "Connection": "keep-alive",
@@ -151,10 +194,7 @@ def mailing(mailingMessage):  # links, text, ua, imageId,
                     "DNT": "1", "Host": "www.dream-singles.com", "Origin": "https://www.dream-singles.com",
                     "Referer": link, "Sec-Fetch-Dest": "document", "Sec-Fetch-Mode": "navigate",
                     "Sec-Fetch-Site": "same-origin", "Sec-Fetch-User": "?1", "Upgrade-Insecure-Requests": "1",
-                    "User-Agent": ua},
-                data='-----------------------------221234741415091439122798769189\\r\nContent-Disposition: form-data; name="mailFolders"\r\n\r\n0\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="targetFolder"\r\n\r\n0\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="draftid"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="receiver"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="sender"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="replyId"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="which_message"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="%s"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="message"\r\n\r\n\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="media-gallery-selection"\r\n\r\n%s\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="video_attachment"; filename=""\r\nContent-Type: application/octet-stream\r\n\r\n\r\n-----------------------------221234741415091439122798769189\r\nContent-Disposition: form-data; name="__tcAction[send]"\r\n\r\nSend\r\n-----------------------------221234741415091439122798769189--\r\n' % (
-                OO000O0OO0O0O0O0O, OOO0O00O0OOO0O00O, OO000O0OO0O0OO0OO, OOO0OOOOOOO0OO00O, O0000O000O0O0OOO0,
-                O0000O000O0O0OOO0, message, imageId)).text
+                    "User-Agent": ua}, data = postData)
     except Exception as e:
         addError(id, link)
         logging(traceback.format_exc())
